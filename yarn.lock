@@ -41,17 +41,6 @@
     "@jridgewell/resolve-uri" "^3.0.3"
     "@jridgewell/sourcemap-codec" "^1.4.10"
 
-"@nxg-org/mineflayer-auto-eat@^1.1.0":
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/@nxg-org/mineflayer-auto-eat/-/mineflayer-auto-eat-1.1.0.tgz#d47774f97f7fd6f0acce9ced1bda11d30bad8ca7"
-  integrity sha512-J6fOuLM5gknV/DjJgN+K8eEc4gDb0YPuNDD6mYD7448eWv36CcKMxw5q7PdiHLQMvMm/TEnjcLs05sluA/cbow==
-  dependencies:
-    "@nxg-org/mineflayer-util-plugin" "^1.4.0"
-    minecraft-data "^2.113.0"
-    mineflayer "^4.0.0"
-    prismarine-item "^1.11.1"
-    vec3 "^0.1.7"
-
 "@nxg-org/mineflayer-util-plugin@^1.4.0":
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/@nxg-org/mineflayer-util-plugin/-/mineflayer-util-plugin-1.4.0.tgz#05c7dab762a2b73ce748f2c6aa48e7133a285dbf"
@@ -199,6 +188,16 @@ debug@^4.3.2, debug@^4.3.3:
   integrity sha512-PRWFHuSU3eDtQJPvnNY7Jcket1j0t5OuOsFzPPzsekD52Zl8qUfFIPEiswXqIvHWGVHOgX+7G/vCNNhehwxfkQ==
   dependencies:
     ms "2.1.2"
+
+deepmerge-ts@^4.2.2:
+  version "4.2.2"
+  resolved "https://registry.yarnpkg.com/deepmerge-ts/-/deepmerge-ts-4.2.2.tgz#582bf34a37592dc8274b137617b539f871aaf11a"
+  integrity sha512-Ka3Kb21tiWjvQvS9U+1Dx+aqFAHsdTnMdYptLTmC2VAmDFMugWMY1e15aTODstipmCun8iNuqeSfcx6rsUUk0Q==
+
+deepmerge@^4.2.2:
+  version "4.2.2"
+  resolved "https://registry.yarnpkg.com/deepmerge/-/deepmerge-4.2.2.tgz#44d2ea3679b8f4d4ffba33f03d865fc1e7bf4955"
+  integrity sha512-FJ3UgI4gIl+PHZm53knsuSFpE+nESMr7M4v9QcgB7S63Kj/6WqMiFQJpBBYz1Pt+66bZpP3Q7Lye0Oo9MPKEdg==
 
 diff@^4.0.1:
   version "4.0.2"
@@ -558,7 +557,7 @@ prismarine-entity@^2.0.0, prismarine-entity@^2.1.1:
     prismarine-item "^1.11.2"
     vec3 "^0.1.4"
 
-prismarine-item@^1.10.0, prismarine-item@^1.10.1, prismarine-item@^1.11.1, prismarine-item@^1.11.2, prismarine-item@^1.11.5, prismarine-item@^1.5.0:
+prismarine-item@^1.10.0, prismarine-item@^1.10.1, prismarine-item@^1.11.2, prismarine-item@^1.11.5, prismarine-item@^1.5.0:
   version "1.11.5"
   resolved "https://registry.npmjs.org/prismarine-item/-/prismarine-item-1.11.5.tgz"
   integrity sha512-aWH1AXTiSDUUM0LVnFtJJ96If/sOiuM3DBZmSvtwFD+ufQsF3WndH2QW2Pv6FbabKByneF9xyPsq5dhUnvcG7g==

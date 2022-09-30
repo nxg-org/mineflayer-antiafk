@@ -11,7 +11,28 @@ const bot = createBot({
 bot.loadPlugin(antiafk);
 
 
-bot.once("spawn", () => bot.antiafk.setOptions({walk: {newChunks: true, rotateChunks: true}})
+bot.once("spawn", () => bot.antiafk.setOptions(
+{
+            walkAround: {
+                enabled: true,
+                newChunks: false, 
+                rotateChunks: false,
+                searchRadius: 8
+            },
+            chatBot: {
+                enabled: false,
+                messages: ["test", "test1", "test2"],
+                delay: 1000,
+                variation: 300
+            },
+            lookAround: {
+                enabled: true
+            },
+            randomMovement: {
+                enabled: true
+            }
+        },
+    )
 )
 
 bot.on("chat", async (username, message) => {
@@ -25,6 +46,7 @@ bot.on("chat", async (username, message) => {
             bot.antiafk.stop();
             break;
         case "forcestop":
+            bot.chat("stopping???")
             bot.antiafk.forceStop()
             break;
     }

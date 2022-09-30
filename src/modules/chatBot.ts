@@ -1,13 +1,14 @@
 import { Bot } from "mineflayer";
-import { sleep } from "../utils";
-import { AFKModule } from "./module";
+import { mergeDeepNoArrayConcat, sleep } from "../utils";
+import { AFKModule, AFKModuleOptions } from "./module";
 
 
-export interface ChatBotModuleOptions {
+export interface ChatBotModuleOptions extends AFKModuleOptions {
     messages: string[];
     delay: number;
     variation: number;
 }
+
 
 
 export class ChatBotModule extends AFKModule {
@@ -16,7 +17,8 @@ export class ChatBotModule extends AFKModule {
 
     public constructor(bot: Bot, options?: Partial<ChatBotModuleOptions>) {
         super(bot);
-        this.options = { messages: ["NextGEN Anti-afk Module"], delay: 1200, variation: 150, ...options };
+        const tmp = { enabled: false, messages: ["NextGEN Anti-afk Module"], delay: 1200, variation: 150};
+        this.options = !! options ? mergeDeepNoArrayConcat(tmp, options): tmp;
 
     }
 
@@ -29,7 +31,7 @@ export class ChatBotModule extends AFKModule {
             let index = Math.floor(this.options.messages.length * Math.random());
             message = this.options.messages[index];
             this.bot.chat(message);
-            await sleep(this.options.delay + this.options.variation * Math.random() > 0.5 ? -Math.random() : Math.random())
+            await sleep(this.options.delay + (this.options.variation * (Math.random() > 0.5 ? -Math.random() : Math.random())))
             i++;
 
         }

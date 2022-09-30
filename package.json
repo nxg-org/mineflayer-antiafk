@@ -22,6 +22,8 @@
     },
     "dependencies": {
         "@nxg-org/mineflayer-util-plugin": "^1.4.0",
+        "deepmerge": "^4.2.2",
+        "deepmerge-ts": "^4.2.2",
         "events": "^3.3.0",
         "mineflayer": "^4.4.0",
         "mineflayer-pathfinder": "^2.3.3",

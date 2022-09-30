@@ -7,6 +7,37 @@ import { promisify } from "util";
 
 export const sleep = promisify(setTimeout);
 
+
+/**
+* Performs a deep merge of objects and returns new object. Does not modify
+* objects (immutable) and merges arrays via concatenation.
+*
+* @param {...object} objects - Objects to merge
+* @returns {object} New object with merged key/values
+*/
+export function mergeDeepNoArrayConcat(...objects: any[]) {
+    const isObject = (obj: any) => obj && typeof obj === 'object';
+
+    return objects.reduce((prev, obj) => {
+        Object.keys(obj).forEach(key => {
+            const pVal = prev[key];
+            const oVal = obj[key];
+
+            if (Array.isArray(pVal) && Array.isArray(oVal)) {
+                prev[key] = oVal//pVal.concat(...oVal);
+            }
+            else if (isObject(pVal) && isObject(oVal)) {
+                prev[key] = mergeDeepNoArrayConcat(pVal, oVal);
+            }
+            else {
+                prev[key] = oVal;
+            }
+        });
+
+        return prev;
+    }, {});
+}
+
 // /**
 //  * Scuffed solution to have a more robust "await this.bot.pathfinder.goto(goal)".
 //  * I've had issues w/ above.

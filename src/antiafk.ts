@@ -2,30 +2,41 @@ import EventEmitter from "events";
 import { Bot } from "mineflayer";
 import { ALL_MODULES } from "./modules";
 import { ChatBotModuleOptions } from "./modules/chatBot";
-import { AFKModule } from "./modules/module";
-import { WalkModuleOptions } from "./modules/walkAround";
+import { AFKModule, AFKModuleOptions } from "./modules/module";
+import { WalkAroundModuleOptions } from "./modules/walkAround";
+import { mergeDeepNoArrayConcat } from "./utils";
 
 
 
 export class AntiAFKOptions {
     constructor(
-        public walk?: Partial<WalkModuleOptions>,
-        public chat?: Partial<ChatBotModuleOptions>,
-        public jump: boolean = false,
-        public spin: boolean = false,
-        public click: boolean = false,
-
-
+        public walkAround: Partial<WalkAroundModuleOptions> = { enabled: false },
+        public chatBot: Partial<ChatBotModuleOptions> = { enabled: false },
+        public randomMovement: Partial<AFKModuleOptions> = { enabled: false },
+        public lookAround: Partial<AFKModuleOptions> = { enabled: false },
+        public eat: Partial<AFKModuleOptions> = { enabled: false },
     ) {
     }
 
-    public static basic(): AntiAFKOptions {
-        return new AntiAFKOptions();
+    public static basic(bot: Bot): AntiAFKOptions {
+        return new AntiAFKOptions(
+            { ...WalkAroundModuleOptions.standard(bot), enabled: true },
+            { enabled: true }
+        );
     }
 
-    public static all(): AntiAFKOptions {
-        return new AntiAFKOptions({}, {}, true, true, true)
+    public static all(bot: Bot): AntiAFKOptions {
+        return new AntiAFKOptions(
+            { ...WalkAroundModuleOptions.standard(bot), enabled: true },
+            { enabled: true },
+            { enabled: true },
+            { enabled: true },
+            { enabled: true }
+        )
     }
+
+
+
 
 }
 
@@ -39,13 +50,20 @@ export class AntiAFK extends EventEmitter {
 
     constructor(private bot: Bot, options?: Partial<AntiAFKOptions>) {
         super();
-        this.options = { ...AntiAFKOptions.basic(), ...options };
+        this.options = !!options ? mergeDeepNoArrayConcat(AntiAFKOptions.basic(bot), options) : AntiAFKOptions.basic(bot);
         this.modules = ALL_MODULES.map(mod => new mod(bot))
     }
 
 
     public setOptions(options: Partial<AntiAFKOptions>) {
-        this.options = { ...this.options, ...options };
+        this.options = mergeDeepNoArrayConcat(this.options, options);
+        for (const option in this.options) {
+            if (((this.options as any)[option]).enabled == true) {
+                const mod = this.modules.find(m => m.constructor.name.toLowerCase().includes(option.toLowerCase()));
+                if (mod) mod.setOptions((this.options as any)[option])
+            }
+
+        }
     }
 
 
@@ -59,7 +77,7 @@ export class AntiAFK extends EventEmitter {
 
 
     private getLessRandomModule(): AFKModule {
-        const passiveMods = this.modules.filter(m => !m.isActive);
+        const passiveMods = this.modules.filter(m => !m.isActive && m.options.enabled);
         return passiveMods[Math.floor(passiveMods.length * Math.random())]
     }
 
