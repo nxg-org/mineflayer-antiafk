@@ -21,6 +21,7 @@
         "prepublish": "npm run build"
     },
     "dependencies": {
+        "@nxg-org/mineflayer-auto-eat": "^1.1.0",
         "@nxg-org/mineflayer-util-plugin": "^1.4.0",
         "deepmerge": "^4.2.2",
         "deepmerge-ts": "^4.2.2",

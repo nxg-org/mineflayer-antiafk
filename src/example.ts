@@ -1,5 +1,6 @@
 import { createBot } from "mineflayer";
 import antiafk from "./index";
+import autoEat from "@nxg-org/mineflayer-auto-eat";
 
 
 const bot = createBot({
@@ -8,19 +9,23 @@ const bot = createBot({
     port: Number(process.argv[3]) ?? 25565,
 });
 
+bot.loadPlugin(autoEat);
 bot.loadPlugin(antiafk);
 
 
-bot.once("spawn", () => bot.antiafk.setOptions(
-{
+
+bot.once("spawn", () => {
+    bot.antiafk.setModuleOptions(
+        {
             walkAround: {
                 enabled: true,
-                newChunks: false, 
-                rotateChunks: false,
+                newChunks: true,
+                rotateChunks: true,
                 searchRadius: 8
             },
             chatBot: {
-                enabled: false,
+                enabled: true,
+                random: false,
                 messages: ["test", "test1", "test2"],
                 delay: 1000,
                 variation: 300
@@ -30,9 +35,25 @@ bot.once("spawn", () => bot.antiafk.setOptions(
             },
             randomMovement: {
                 enabled: true
-            }
+            },
+            blockBreak: {
+                enabled: true,
+                // locate all easily broken blocks via this method.
+                preferBlockIds: Object.values(bot.registry.blocks).filter(b => b.hardness && b.hardness >= 0.5).map(b => b.id)
+            },
         },
-    )
+    );
+    bot.antiafk.setPassiveOptions({
+        killAura: {
+            enabled: true,
+            multi: true,
+            reach: 5
+        },
+        eat: {
+            enabled: true
+        }
+    })
+}
 )
 
 bot.on("chat", async (username, message) => {

@@ -21,6 +21,7 @@ export class RandomMovementModule extends AFKModule {
      */
     public async perform(): Promise<boolean> {
         if (this.bot.pathfinder.isMoving()) return false;
+        this.isActive = true;
         let currentStates: [ControlState, boolean][] = RandomMovementModule.controlStates.map(name => [name, Math.random() > 0.5])
         currentStates.map(([name, val]) => this.bot.setControlState(name, val))
         await sleep(1000);
@@ -28,9 +29,14 @@ export class RandomMovementModule extends AFKModule {
         return true;
     }
 
-    public async cancel(): Promise<boolean> {
-        if (this.bot.pathfinder.isMoving()) return false;
+
+    public complete(success: boolean): void {
         RandomMovementModule.controlStates.map(name => this.bot.setControlState(name, false))
+        super.complete(success)
+    }
+
+    public async cancel(): Promise<boolean> {
+        // if (this.bot.pathfinder.isMoving()) return false;
         this.complete(false)
         return true;
     }

@@ -9,6 +9,7 @@ export class LookAroundModule extends AFKModule {
     }
 
     public async perform(): Promise<boolean> {
+        this.isActive = true;
         let yaw = 2*Math.random()*Math.PI - (0.5*Math.PI);
         let pitch = Math.random()*Math.PI - (0.5*Math.PI);
         await this.bot.look(yaw,pitch,false);

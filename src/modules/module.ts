@@ -14,7 +14,6 @@ export abstract class AFKModule {
         this.isActive = false;
     }
 
-
     public abstract perform(): Promise<boolean>;
     public abstract cancel(): Promise<boolean>;
     
