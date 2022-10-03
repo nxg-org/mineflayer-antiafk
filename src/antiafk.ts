@@ -1,15 +1,9 @@
 import EventEmitter from "events";
 import { Bot } from "mineflayer";
-import { AFKModule, AFKModuleOptions, DEFAULT_MODULES, BlockBreakModuleOptions, ChatBotModuleOptions, MODULE_DEFAULT_SETTINGS, AntiAFKModuleOptions, WalkAroundModuleOptions } from "./modules";
+import { AFKModule, AFKModuleOptions, DEFAULT_MODULES, MODULE_DEFAULT_SETTINGS, AntiAFKModuleOptions } from "./modules";
 import { DEFAULT_PASSIVES, AntiAFKPassiveOptions, PASSIVE_DEFAULT_SETTINGS } from "./passives";
-import { KillAuraPassive, KillAuraPassiveOptions } from "./passives/killaura";
 import { AFKPassive, AFKPassiveOptions } from "./passives/passive";
 import { AFKConstructor, mergeDeepNoArrayConcat } from "./utils";
-
-
-
-
-
 
 
 export class AntiAFK extends EventEmitter {
@@ -124,6 +118,7 @@ export class AntiAFK extends EventEmitter {
         while (!this.shouldStop) {
             this.lastModule = this.getLessRandomModule();
             if (!this.lastModule) return false;
+            this.bot.chat(this.lastModule.constructor.name);
             this.passives.map(p => p.options.enabled ? p.begin() : p.stop())
             await this.lastModule.perform();
         }

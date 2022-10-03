@@ -23,14 +23,11 @@ export class ChatBotModule extends AFKModule {
     }
 
     public async perform(): Promise<boolean> {
-        this.isActive = true;
+        super.perform();
         this.shouldCancel = false;
-        let message: string;
         let i = 0;
         while (i < this.options.messages.length && !this.shouldCancel) {
-            let index = this.options.random ? Math.floor(this.options.messages.length * Math.random()) : i;
-            message = this.options.messages[index];
-            this.bot.chat(message);
+            this.bot.chat(this.options.messages[this.options.random ? Math.floor(this.options.messages.length * Math.random()) : i]);
             await sleep(this.options.delay + (this.options.variation * (Math.random() > 0.5 ? -Math.random() : Math.random())))
             i++;
 
@@ -42,7 +39,8 @@ export class ChatBotModule extends AFKModule {
 
     public async cancel(): Promise<boolean> {
         this.shouldCancel = true;
-        this.complete(false);
+        
+        super.cancel();
         return true;
     }
 

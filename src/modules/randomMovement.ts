@@ -20,10 +20,18 @@ export class RandomMovementModule extends AFKModule {
      * @returns Whether bot moved in accordance to randomMovement's decisions.
      */
     public async perform(): Promise<boolean> {
-        if (this.bot.pathfinder.isMoving()) return false;
-        this.isActive = true;
+        super.perform();
+        if (this.bot.pathfinder.isMoving()) {
+            this.complete(false);
+            return false;
+        }
         let currentStates: [ControlState, boolean][] = RandomMovementModule.controlStates.map(name => [name, Math.random() > 0.5])
         currentStates.map(([name, val]) => this.bot.setControlState(name, val))
+
+        if (this.bot.pathfinder.movements.liquids.has(this.bot.blockAt(this.bot.entity.position)!.type)) {
+            this.bot.setControlState("jump", true);
+        }
+        
         await sleep(1000);
         this.complete(true)
         return true;
@@ -37,7 +45,7 @@ export class RandomMovementModule extends AFKModule {
 
     public async cancel(): Promise<boolean> {
         // if (this.bot.pathfinder.isMoving()) return false;
-        this.complete(false)
+        super.complete();
         return true;
     }
 

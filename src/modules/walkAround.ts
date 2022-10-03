@@ -10,6 +10,7 @@ export class WalkAroundModuleOptions implements AFKModuleOptions {
         public enabled: boolean = false,
         public newChunks: boolean = false,
         public rotateChunks: boolean = false,
+        // public stayNearOrigin: boolean = false,
         public preferBlockIds: number[] = [],
         public avoidBlockIds: number[] = [],
         public timeout: number = 10000,
@@ -23,6 +24,7 @@ export class WalkAroundModuleOptions implements AFKModuleOptions {
             false,
             false, 
             false, 
+            // false,
             [bot.registry.blocksByName.grass.id, bot.registry.blocksByName.cobblestone.id], 
             [bot.registry.blocksByName.water.id, bot.registry.blocksByName.lava.id, bot.registry.blocksByName.air.id]
         )   
@@ -32,6 +34,7 @@ export class WalkAroundModuleOptions implements AFKModuleOptions {
             false,
             true, 
             true, 
+            // true,
             [bot.registry.blocksByName.grass.id], 
             [bot.registry.blocksByName.water.id, bot.registry.blocksByName.lava.id, bot.registry.blocksByName.air.id]
         )
@@ -100,9 +103,12 @@ export class WalkAroundModule extends AFKModule {
     }
 
     async perform(): Promise<boolean> {
+        super.perform();
         let bl = this.findLocation();
-        if (!bl) return false;
-        this.isActive = true;
+        if (!bl) {
+            super.complete(false);
+            return false;
+        }
         try {
             await this.bot.pathfinder.goto(new goals.GoalGetToBlock(bl.x, bl.y, bl.z))
             this.lastLocation = this.bot.entity.position.floored();
@@ -118,7 +124,8 @@ export class WalkAroundModule extends AFKModule {
     async cancel(): Promise<boolean> {
         this.bot.pathfinder.stop();
         this.bot.pathfinder.setGoal(null);
-        this.complete(false);
+        
+        super.complete();
         return true;
     }
 

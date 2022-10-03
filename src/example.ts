@@ -39,13 +39,19 @@ class TestModule extends AFKModule {
     // }
 
     public async perform(): Promise<boolean> {
+        super.perform();
+
         this.bot.chat("began test module. " + this.options.messageToSend);
         await sleep(1000);
+
+        this.complete(true);
         return true;
     }
 
     public async cancel(): Promise<boolean> {
         this.bot.chat("canceled test module.")
+        
+        super.cancel();
         return true;
     }
 }

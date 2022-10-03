@@ -13,9 +13,8 @@ bot.loadPlugin(antiafk);
 bot.on("spawn", () => {
 
     bot.antiafk.setModuleOptions({
-        WalkAroundModule: { enabled: false },
-        RandomMovementModule: { enabled: false },
-        ChatBotModule: { enabled: true }
+        WalkAroundModule: { enabled: true },
+        ChatBotModule: { enabled: false }
     })
     bot.antiafk.start();
 

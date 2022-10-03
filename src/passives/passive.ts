@@ -37,7 +37,6 @@ export abstract class AFKPassive {
     }
 
     public setOptions(options: Partial<AFKPassiveOptions>, initial?: AFKPassiveOptions): void {
-        // console.trace("fuck", this.constructor.name, options)
         this.options = mergeDeepNoArrayConcat(initial ?? this.options, options)
     }
 

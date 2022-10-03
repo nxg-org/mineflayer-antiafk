@@ -17,8 +17,16 @@ export abstract class AFKModule {
         this.options = options ?? {enabled: false};
     }
 
-    public abstract perform(): Promise<boolean>;
-    public abstract cancel(): Promise<boolean>;
+    public async perform(): Promise<boolean> {
+        this.isActive = true;
+        return true;
+
+    }
+    public async cancel(): Promise<boolean> {
+        this.isActive = false;
+        this.complete(false);
+        return true;
+    }
     
 
     public setOptions(options: Partial<AFKModuleOptions>, initial?: AFKModuleOptions): void {
