@@ -5,6 +5,9 @@ import { goals } from "mineflayer-pathfinder";
 
 import { promisify } from "util";
 
+export type AFKConstructor<T> = new (bot: Bot, ...any: any[]) => T
+
+
 export const sleep = promisify(setTimeout);
 
 

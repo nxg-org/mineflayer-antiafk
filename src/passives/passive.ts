@@ -9,6 +9,7 @@ import { mergeDeepNoArrayConcat } from "../utils";
  */
 export interface AFKPassiveOptions {
     enabled: boolean;
+    [others: string]: any
 }
 
 
@@ -16,7 +17,7 @@ export abstract class AFKPassive {
 
 
     protected eventWanted: keyof BotEvents = "physicsTick";
-    protected active: boolean = false;
+    protected isActive: boolean = false;
 
     constructor(protected bot: Bot, public options: AFKPassiveOptions = {enabled: false}) {}
 
@@ -24,20 +25,24 @@ export abstract class AFKPassive {
     public abstract listener: () => void;
 
     public begin() {
-        if (this.active) return;
-        this.active = true;
+        if (this.isActive) return;
+        this.isActive = true;
         this.bot.on(this.eventWanted, this.listener)
     };
 
     public stop() {
-        if (!this.active) return;
-        this.active = false;
-        // console.trace("disabled", this.constructor.name)
+        if (!this.isActive) return;
+        this.isActive = false;
         this.bot.removeListener(this.eventWanted, this.listener)
     }
 
     public setOptions(options: Partial<AFKPassiveOptions>): void {
         this.options = mergeDeepNoArrayConcat(this.options, options)
+    }
+
+
+    public toString(): string {
+        return `${this.constructor.name}{isActive: ${this.isActive}}`
     }
 
 }

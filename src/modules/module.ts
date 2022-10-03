@@ -5,13 +5,16 @@ import { mergeDeepNoArrayConcat } from "../utils";
 
 export interface AFKModuleOptions {
     enabled: boolean
+    [other: string]: any
 }
 
 export abstract class AFKModule {
     public isActive: boolean;
+    public options: AFKModuleOptions;
 
-    public constructor(protected bot: Bot, public options: AFKModuleOptions = {enabled: false}) {
+    public constructor(protected bot: Bot, options?: AFKModuleOptions) {
         this.isActive = false;
+        this.options = options ?? {enabled: false};
     }
 
     public abstract perform(): Promise<boolean>;
@@ -19,6 +22,7 @@ export abstract class AFKModule {
     
 
     public setOptions(options: Partial<AFKModuleOptions>): void {
+        // console.trace("fuck", this.constructor.name, options)
         this.options = mergeDeepNoArrayConcat(this.options, options)
     }
 
@@ -29,4 +33,9 @@ export abstract class AFKModule {
     public signal(str: string, ...any: any) {
         this.bot.antiafk.emit(str, ...any)
     }
+
+    public toString(): string {
+        return `${this.constructor.name}{isActive: ${this.isActive}}`
+    }
+
 }
