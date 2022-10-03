@@ -121,8 +121,8 @@ export class AntiAFK extends EventEmitter {
     }
 
     public addModules(...mods: AFKConstructor<AFKModule>[]) {
-        let names = this.modules.map(m => m.constructor.name);
-        let toMake = mods.filter(m => !names.includes(m.name))
+        let currentNames = this.modules.map(m => m.constructor.name);
+        let toMake = mods.filter(m => !currentNames.includes(m.name))
         let toMakeNames = toMake.map(m => m.name);
         toMake.map(m => this.moduleOptions[m.name] ??= { enabled: true });
         Object.entries(this.moduleOptions).filter(([nme, val]) => toMakeNames.includes(nme)).map(([nme, val]) => val.enabled = true);
@@ -130,15 +130,15 @@ export class AntiAFK extends EventEmitter {
     }
 
     public removeModules(...mods: AFKConstructor<AFKModule>[]) {
-        let names = mods.map(m => m.name);
-        names.map(nme => this.moduleOptions[nme] ??= { enabled: false });
-        Object.entries(this.moduleOptions).filter(([nme, val]) => names.includes(nme)).map(([nme, val]) => val.enabled = false);
-        this.modules = this.modules.filter(m => !names.includes(m.constructor.name))
+        let toRemoveNames = mods.map(m => m.name);
+        toRemoveNames.map(nme => this.moduleOptions[nme] ??= { enabled: false });
+        Object.entries(this.moduleOptions).filter(([nme, val]) => toRemoveNames.includes(nme)).map(([nme, val]) => val.enabled = false);
+        this.modules = this.modules.filter(m => !toRemoveNames.includes(m.constructor.name))
     }
 
     public addPassives(...passives: AFKConstructor<AFKPassive>[]) {
-        let names = this.passives.map(m => m.constructor.name);
-        let toMake = passives.filter(m => !names.includes(m.name))
+        let currentNames = this.passives.map(m => m.constructor.name);
+        let toMake = passives.filter(m => !currentNames.includes(m.name))
         let toMakeNames = toMake.map(m => m.name);
         toMake.map(m => this.passiveOptions[m.name] ??= { enabled: true });
         Object.entries(this.passiveOptions).filter(([nme, val]) => toMakeNames.includes(nme)).map(([nme, val]) => val.enabled = true);
@@ -146,14 +146,14 @@ export class AntiAFK extends EventEmitter {
     }
 
     public removePassives(...passives: AFKConstructor<AFKPassive>[]) {
-        let names = passives.map(m => m.constructor.name);
-        this.passives.filter(m => names.includes(m.constructor.name)).map(m => m.stop());
-        names.map(nme => this.passiveOptions[nme] ??= { enabled: false });
-        Object.entries(this.passiveOptions).filter(([nme, val]) => names.includes(nme)).map(([nme, val]) => val.enabled = false);
-        this.passives = this.passives.filter(m => !names.includes(m.constructor.name))
+        let toRemoveNames = passives.map(m => m.constructor.name);
+        this.passives.filter(m => toRemoveNames.includes(m.constructor.name)).map(m => m.stop());
+        toRemoveNames.map(nme => this.passiveOptions[nme] ??= { enabled: false });
+        Object.entries(this.passiveOptions).filter(([nme, val]) => toRemoveNames.includes(nme)).map(([nme, val]) => val.enabled = false);
+        this.passives = this.passives.filter(m => !toRemoveNames.includes(m.constructor.name))
     }
 
-    private isModuleEnabled(mod: AFKConstructor<AFKModule> | AFKModule): boolean {
+    public isModuleEnabled(mod: AFKConstructor<AFKModule> | AFKModule): boolean {
         if (mod instanceof AFKModule) {
             return !!this.moduleOptions[mod.constructor.name]?.enabled;
         }

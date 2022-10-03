@@ -21,9 +21,9 @@ export abstract class AFKModule {
     public abstract cancel(): Promise<boolean>;
     
 
-    public setOptions(options: Partial<AFKModuleOptions>): void {
+    public setOptions(options: Partial<AFKModuleOptions>, initial?: AFKModuleOptions): void {
         // console.trace("fuck", this.constructor.name, options)
-        this.options = mergeDeepNoArrayConcat(this.options, options)
+        this.options = mergeDeepNoArrayConcat(initial ?? this.options, options)
     }
 
     public complete(...any: any): void {

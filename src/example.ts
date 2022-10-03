@@ -18,16 +18,25 @@ bot.loadPlugin(antiafk);
 
 // Example of a custom AFK module setting.
 interface TestModuleOptions extends AFKModuleOptions {
-    messageToSend: "hi"
+    messageToSend: string
 }
 
 // Example of a custom AFK module.
 // These can be inserted at runtime.
 class TestModule extends AFKModule {
 
+    // weak typing convention.
+    // specify a member-level "options" variable for strong conventions.
     public constructor(bot: Bot, options?: TestModuleOptions) {
         super(bot, options);
     }
+
+    // // example:
+    // public options: TestModuleOptions;
+    // public constructor(bot: Bot, options?: TestModuleOptions) {
+    //     super(bot);
+    //     this.options = options ?? {enabled: false, messageToSend: "hi"};
+    // }
 
     public async perform(): Promise<boolean> {
         this.bot.chat("began test module. " + this.options.messageToSend);
