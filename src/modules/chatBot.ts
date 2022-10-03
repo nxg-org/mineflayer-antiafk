@@ -39,8 +39,8 @@ export class ChatBotModule extends AFKModule {
 
     public async cancel(): Promise<boolean> {
         this.shouldCancel = true;
-        
-        super.cancel();
+
+        this.complete(false);
         return true;
     }
 

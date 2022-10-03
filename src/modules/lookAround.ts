@@ -19,8 +19,8 @@ export class LookAroundModule extends AFKModule {
 
     public async cancel(): Promise<boolean> {
         await this.bot.look(this.bot.entity.yaw, this.bot.entity.pitch, true) // override continued head movement.
-        
-        super.cancel();
+
+        this.complete(false);
         return true;
     }
 }

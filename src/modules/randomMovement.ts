@@ -28,7 +28,7 @@ export class RandomMovementModule extends AFKModule {
         let currentStates: [ControlState, boolean][] = RandomMovementModule.controlStates.map(name => [name, Math.random() > 0.5])
         currentStates.map(([name, val]) => this.bot.setControlState(name, val))
 
-        if (this.bot.pathfinder.movements.liquids.has(this.bot.blockAt(this.bot.entity.position)!.type)) {
+        if (this.bot.pathfinder.movements.liquids.has(this.bot.blockAt(this.bot.entity.position)?.type ?? -1)) {
             this.bot.setControlState("jump", true);
         }
         

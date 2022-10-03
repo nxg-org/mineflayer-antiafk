@@ -13,36 +13,40 @@ export interface AFKPassiveOptions {
 }
 
 
-export abstract class AFKPassive {
+    export abstract class AFKPassive {
 
 
-    protected eventWanted: keyof BotEvents = "physicsTick";
-    protected isActive: boolean = false;
+        protected eventWanted: keyof BotEvents = "physicsTick";
+        protected isActive: boolean = false;
 
-    constructor(protected bot: Bot, public options: AFKPassiveOptions = {enabled: false}) {}
+        constructor(protected bot: Bot, public options: AFKPassiveOptions = {enabled: false}) {}
 
 
-    public abstract listener: () => void;
+        /**
+         * TODO: Make listener's parameter match the BotEvents[eventWanted] function's parameters.
+         * Probably not doable.
+         */
+        public abstract listener: (...args: any[]) => void;
 
-    public begin() {
-        if (this.isActive) return;
-        this.isActive = true;
-        this.bot.on(this.eventWanted, this.listener)
-    };
+        public begin() {
+            if (this.isActive) return;
+            this.isActive = true;
+            this.bot.on(this.eventWanted, this.listener)
+        };
 
-    public stop() {
-        if (!this.isActive) return;
-        this.isActive = false;
-        this.bot.removeListener(this.eventWanted, this.listener)
+        public stop() {
+            if (!this.isActive) return;
+            this.isActive = false;
+            this.bot.removeListener(this.eventWanted, this.listener)
+        }
+
+        public setOptions(options: Partial<AFKPassiveOptions>, initial?: AFKPassiveOptions): void {
+            this.options = mergeDeepNoArrayConcat(initial ?? this.options, options)
+        }
+
+
+        public toString(): string {
+            return `${this.constructor.name}{isActive: ${this.isActive}}`
+        }
+
     }
-
-    public setOptions(options: Partial<AFKPassiveOptions>, initial?: AFKPassiveOptions): void {
-        this.options = mergeDeepNoArrayConcat(initial ?? this.options, options)
-    }
-
-
-    public toString(): string {
-        return `${this.constructor.name}{isActive: ${this.isActive}}`
-    }
-
-}

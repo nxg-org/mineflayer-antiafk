@@ -1,6 +1,7 @@
-import { Bot, createBot } from "mineflayer";
-import antiafk, { AFKModule, AFKModuleOptions } from "./index";
+import { Bot, BotEvents, createBot } from "mineflayer";
+import antiafk, { AFKModule, AFKModuleOptions, AFKPassive } from "./index";
 import autoEat from "@nxg-org/mineflayer-auto-eat";
+import type {Block} from "prismarine-block"
 
 import { promisify } from "util";
 const sleep = promisify(setTimeout);
@@ -51,10 +52,22 @@ class TestModule extends AFKModule {
     public async cancel(): Promise<boolean> {
         this.bot.chat("canceled test module.")
         
-        super.cancel();
+        this.complete(false);
         return true;
     }
 }
+
+
+// Example passive for AFK.
+class TestPassive extends AFKPassive {
+    protected eventWanted: keyof BotEvents = "diggingCompleted"
+
+    public listener = (...blocks: Block[]) => {
+        console.log(blocks.map(b => [b.name, b.position]));
+
+    };
+}
+
 
 
 
@@ -63,6 +76,7 @@ bot.once("spawn", async () => {
     // insert generic type of module wanted.
     // instantiation is handled internally.
     bot.antiafk.addModules(TestModule);
+    bot.antiafk.addPassives(TestPassive);
 
     // set module settings via this method.
     // the name must EXACTLY match the name of the class.

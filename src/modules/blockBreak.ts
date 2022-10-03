@@ -121,8 +121,8 @@ export class BlockBreakModule extends AFKModule {
 
 
             let killMe1 = false;
-            if (this.bot.pathfinder.movements.liquids.has(this.bot.blockAt(this.bot.entity.position)!.type) 
-            && this.bot.pathfinder.movements.liquids.has(this.bot.blockAt(this.bot.entity.position.offset(0, -1, 0))!.type) ) {
+            if (this.bot.pathfinder.movements.liquids.has(this.bot.blockAt(this.bot.entity.position)?.type ?? -1) 
+            && this.bot.pathfinder.movements.liquids.has(this.bot.blockAt(this.bot.entity.position.offset(0, -1, 0))?.type ?? -1 ) ) {
                 killMe1 = true;
                 this.bot.setControlState("jump", true);
             }
@@ -148,8 +148,8 @@ export class BlockBreakModule extends AFKModule {
         this.bot.pathfinder.stop();
         this.bot.pathfinder.setGoal(null);
         this.bot.stopDigging();
-        
-        super.cancel();
+
+        this.complete(false);
         return true;
     }
 

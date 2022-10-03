@@ -22,11 +22,7 @@ export abstract class AFKModule {
         return true;
 
     }
-    public async cancel(): Promise<boolean> {
-        this.isActive = false;
-        this.complete(false);
-        return true;
-    }
+    public abstract cancel(): Promise<boolean>;
     
 
     public setOptions(options: Partial<AFKModuleOptions>, initial?: AFKModuleOptions): void {
