@@ -18,5 +18,5 @@ export default function plugin(bot: Bot) {
     bot.antiafk = new AntiAFK(bot);
 }
 
-export {AFKModule, AFKModuleOptions} from "./modules";
-export {AFKPassive, AFKPassiveOptions} from "./passives"
+export {AFKModule, AFKModuleOptions, DEFAULT_MODULES, MODULE_DEFAULT_SETTINGS} from "./modules";
+export {AFKPassive, AFKPassiveOptions, DEFAULT_PASSIVES, PASSIVE_DEFAULT_SETTINGS} from "./passives"
