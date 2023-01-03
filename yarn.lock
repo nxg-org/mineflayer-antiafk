@@ -395,9 +395,9 @@ minecraft-protocol@^1.31.0:
     yggdrasil "^1.4.0"
 
 mineflayer-pathfinder@^2.3.3:
-  version "2.3.3"
-  resolved "https://registry.yarnpkg.com/mineflayer-pathfinder/-/mineflayer-pathfinder-2.3.3.tgz#bdbe15caea88c83116279dada8916b14c8ec8a93"
-  integrity sha512-00de9GhYMj8IB6EtohQ8aEdf53zx1nFocOZhe1V3cuy64BpLJgSOFla5qYVaSBCbO9x/07XqKx60jxKpUHD2dA==
+  version "2.4.2"
+  resolved "https://registry.yarnpkg.com/mineflayer-pathfinder/-/mineflayer-pathfinder-2.4.2.tgz#d76d356568d242627115594b4a28e0b5dad6113e"
+  integrity sha512-Aoy4l5/QNtIggozL1/q1/vZUjckAtsOumcyNjAQd/Ea5hRgoW+Rr2yedrL6noUHfP50Gjo7Ms2nLuzEJL16GRA==
   dependencies:
     minecraft-data "^3.5.1"
     prismarine-block "^1.16.3"
