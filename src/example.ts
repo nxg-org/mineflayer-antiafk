@@ -39,7 +39,7 @@ class TestModule extends AFKModule {
     //     this.options = options ?? {enabled: false, messageToSend: "hi"};
     // }
 
-    public async perform(): Promise<boolean> {
+    public override async perform(): Promise<boolean> {
         super.perform();
 
         this.bot.chat("began test module. " + this.options.messageToSend);
@@ -49,7 +49,7 @@ class TestModule extends AFKModule {
         return true;
     }
 
-    public async cancel(): Promise<boolean> {
+    public override async cancel(): Promise<boolean> {
         this.bot.chat("canceled test module.")
         
         this.complete(false);
@@ -64,7 +64,6 @@ class TestPassive extends AFKPassive {
 
     public listener = (...blocks: Block[]) => {
         console.log(blocks.map(b => [b.name, b.position]));
-
     };
 }
 
@@ -119,7 +118,7 @@ bot.once("spawn", async () => {
             BlockBreakModule: {
                 enabled: true,
                 // locate all easily broken blocks via this method.
-                preferBlockIds: Object.values(bot.registry.blocks).filter(b => b.hardness && b.hardness >= 0.5).map(b => b.id)
+                preferBlockIds: Object.values(bot.registry.blocks).filter(b => b.hardness && b.hardness <= 0.5).map(b => b.id)
             },
         },
     );

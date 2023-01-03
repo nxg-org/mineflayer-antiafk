@@ -1,7 +1,4 @@
 import { Bot } from "mineflayer";
-import { Vec3 } from "vec3";
-import { Block } from "prismarine-block";
-import { goals } from "mineflayer-pathfinder";
 
 import { promisify } from "util";
 

@@ -15,12 +15,12 @@ export class AntiAFK extends EventEmitter {
     private shouldStop: boolean = false;
 
 
-    constructor(private bot: Bot, moduleOptions?: AntiAFKModuleOptions, passiveOptions?: AntiAFKPassiveOptions) {
+    constructor(private bot: Bot, moduleOptions: AntiAFKModuleOptions = {}, passiveOptions: AntiAFKPassiveOptions = {}) {
         super();
         this.modules = DEFAULT_MODULES.map(mod => new mod(bot))
         this.passives = DEFAULT_PASSIVES.map(passive => new passive(bot))
-        this.setModuleOptions(moduleOptions ?? {}, MODULE_DEFAULT_SETTINGS(bot));
-        this.setPassiveOptions(passiveOptions ?? {}, PASSIVE_DEFAULT_SETTINGS);
+        this.setModuleOptions(moduleOptions, MODULE_DEFAULT_SETTINGS(bot));
+        this.setPassiveOptions(passiveOptions, PASSIVE_DEFAULT_SETTINGS);
         this.lastModule = null;
     }
 

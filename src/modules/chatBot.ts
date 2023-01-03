@@ -10,19 +10,19 @@ export interface ChatBotModuleOptions extends AFKModuleOptions {
     variation: number;
 }
 
+const tmp = { enabled: false, messages: ["NextGEN Anti-afk Module"], random: false, delay: 1200, variation: 150};
 
 export class ChatBotModule extends AFKModule {
     public options: ChatBotModuleOptions;
     private shouldCancel: boolean = false;
 
-    public constructor(bot: Bot, options?: Partial<ChatBotModuleOptions>) {
+    public constructor(bot: Bot, options: Partial<ChatBotModuleOptions> = {}) {
         super(bot);
-        const tmp = { enabled: false, messages: ["NextGEN Anti-afk Module"], random: false, delay: 1200, variation: 150};
-        this.options = !! options ? mergeDeepNoArrayConcat(tmp, options): tmp;
+        this.options = mergeDeepNoArrayConcat(tmp, options);
 
     }
 
-    public async perform(): Promise<boolean> {
+    public override async perform(): Promise<boolean> {
         super.perform();
         this.shouldCancel = false;
         let i = 0;
@@ -36,16 +36,10 @@ export class ChatBotModule extends AFKModule {
         return true;
     }
 
-
-    public async cancel(): Promise<boolean> {
+    public override async cancel(): Promise<boolean> {
         this.shouldCancel = true;
 
         this.complete(false);
         return true;
     }
-
-
-
-
-
 }

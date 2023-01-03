@@ -10,11 +10,9 @@ export interface AFKModuleOptions {
 
 export abstract class AFKModule {
     public isActive: boolean;
-    public options: AFKModuleOptions;
-
-    public constructor(protected bot: Bot, options?: AFKModuleOptions) {
+    
+    public constructor(protected bot: Bot, public options: AFKModuleOptions = {enabled: false}) {
         this.isActive = false;
-        this.options = options ?? {enabled: false};
     }
 
     public async perform(): Promise<boolean> {
@@ -25,8 +23,12 @@ export abstract class AFKModule {
     public abstract cancel(): Promise<boolean>;
     
 
+    /**
+     * Set options of current module.
+     * @param options 
+     * @param initial 
+     */
     public setOptions(options: Partial<AFKModuleOptions>, initial?: AFKModuleOptions): void {
-        // console.trace("fuck", this.constructor.name, options)
         this.options = mergeDeepNoArrayConcat(initial ?? this.options, options)
     }
 

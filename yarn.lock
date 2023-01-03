@@ -65,6 +65,19 @@
     prismarine-item "^1.11.2"
     vec3 "^0.1.7"
 
+"@nxg-org/mineflayer-util-plugin@^1.5.0":
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/@nxg-org/mineflayer-util-plugin/-/mineflayer-util-plugin-1.5.0.tgz#ae9c4bdef91232fe4397b898c4e8a6f603bd4f44"
+  integrity sha512-Q68ItT2/B9qNP9/nVW7ab/CRQSQnQ+9KdOjrMFszcOc8zMmcCLJyHxAit3FBV5OBSTFqahHqfrpn69rwV6Y95A==
+  dependencies:
+    minecraft-data "^2.113.0"
+    mineflayer "^4.0.0"
+    mineflayer-pathfinder "^1.9.1"
+    prismarine-block "^1.13.1"
+    prismarine-entity "^2.0.0"
+    prismarine-item "^1.11.2"
+    vec3 "^0.1.7"
+
 "@tsconfig/node10@^1.0.7":
   version "1.0.9"
   resolved "https://registry.yarnpkg.com/@tsconfig/node10/-/node10-1.0.9.tgz#df4907fc07a886922637b15e02d4cebc4c0021b2"
@@ -89,6 +102,11 @@
   version "18.7.23"
   resolved "https://registry.npmjs.org/@types/node/-/node-18.7.23.tgz"
   integrity sha512-DWNcCHolDq0ZKGizjx2DZjR/PqsYwAcYUJmfMWqtVU2MBMG5Mo+xFZrhGId5r/O5HOuMPyQEcM6KUBp5lBZZBg==
+
+"@types/node@^18.8.2":
+  version "18.8.2"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.8.2.tgz#17d42c6322d917764dd3d2d3a10d7884925de067"
+  integrity sha512-cRMwIgdDN43GO4xMWAfJAecYn8wV4JbsOGHNfNUIDiuYkUYAR5ec4Rj7IO2SAhFPEfpPtLtUTbbny/TCT7aDwA==
 
 "@types/readable-stream@^2.3.13":
   version "2.3.14"

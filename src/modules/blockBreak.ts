@@ -37,10 +37,10 @@ export class BlockBreakModule extends AFKModule {
 
 
 
-    constructor(bot: Bot, options: Partial<BlockBreakModuleOptions>) {
+    constructor(bot: Bot, options: Partial<BlockBreakModuleOptions> = {}) {
         super(bot)
         this.lastLocation = null;
-        this.options = !!options ? mergeDeepNoArrayConcat(BlockBreakModuleOptions.standard(bot), options) : BlockBreakModuleOptions.standard(bot)
+        this.options = mergeDeepNoArrayConcat(BlockBreakModuleOptions.standard(bot), options);
         this.avoidSurroundingBlocks = [bot.registry.blocksByName.water.id, bot.registry.blocksByName.lava.id];
         // this.breakingMovements = new Movements(bot, bot.registry);
         // this.breakingMovements.blocksToAvoid.add(bot.registry.blocksByName.water.id);
@@ -53,10 +53,6 @@ export class BlockBreakModule extends AFKModule {
      */
     private badLiquidCheck(block: Block): boolean {
         return this.offsets.some(off => {
-
-
-
-
             const first = this.bot.blockAt(block.position.plus(off))
             const second = this.bot.blockAt(block.position.minus(off));
             const third = this.bot.blockAt(block.position.plus(off.scaled(2)))
@@ -104,7 +100,7 @@ export class BlockBreakModule extends AFKModule {
 
     }
 
-    public async perform(): Promise<boolean> {
+    public override async perform(): Promise<boolean> {
         super.perform();
         let bl = this.findBlock();
         if (!bl) {
@@ -114,26 +110,24 @@ export class BlockBreakModule extends AFKModule {
       
         this.lastLocation = bl.position;
         try {
-            // const oldMovements = this.bot.pathfinder.movements;
-            // this.bot.pathfinder.setMovements(this.breakingMovements)
             await this.bot.pathfinder.goto(new goals.GoalLookAtBlock(bl.position, this.bot.world))
-            // this.bot.pathfinder.setMovements(oldMovements);
 
-
-            let killMe1 = false;
+            // note: this is to make the bot stop sinking when digging.
+            let pleaseStayAfloat = false;
             if (this.bot.pathfinder.movements.liquids.has(this.bot.blockAt(this.bot.entity.position)?.type ?? -1) 
             && this.bot.pathfinder.movements.liquids.has(this.bot.blockAt(this.bot.entity.position.offset(0, -1, 0))?.type ?? -1 ) ) {
-                killMe1 = true;
+                pleaseStayAfloat = true;
                 this.bot.setControlState("jump", true);
             }
 
-            // bro I can't even catch the error. it's internally in dig. Fuck off.
+            // Note: this may error.
+            // I cannot catch this error as it is internal.
+            // So basically, this may crash. :thumbsup:
             await this.bot.dig(bl, true, 'raycast')
 
-            if (killMe1) {
+            if (pleaseStayAfloat) {
                 this.bot.setControlState("jump", false);
             }
-
 
             this.complete(true);
             return true
@@ -144,7 +138,7 @@ export class BlockBreakModule extends AFKModule {
         }
 
     }
-    public async cancel(): Promise<boolean> {
+    public override async cancel(): Promise<boolean> {
         this.bot.pathfinder.stop();
         this.bot.pathfinder.setGoal(null);
         this.bot.stopDigging();

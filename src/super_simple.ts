@@ -1,4 +1,4 @@
-import antiafk, { DEFAULT_MODULES, DEFAULT_PASSIVES } from "./index";
+import antiafk from "./index";
 import { Bot, createBot } from "mineflayer";
 
 const bot = createBot({

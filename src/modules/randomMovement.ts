@@ -19,7 +19,7 @@ export class RandomMovementModule extends AFKModule {
      * I will change if people ask me to.
      * @returns Whether bot moved in accordance to randomMovement's decisions.
      */
-    public async perform(): Promise<boolean> {
+    public override async perform(): Promise<boolean> {
         super.perform();
         if (this.bot.pathfinder.isMoving()) {
             this.complete(false);
@@ -43,9 +43,9 @@ export class RandomMovementModule extends AFKModule {
         super.complete(success)
     }
 
-    public async cancel(): Promise<boolean> {
+    public override async cancel(): Promise<boolean> {
         // if (this.bot.pathfinder.isMoving()) return false;
-        super.complete();
+        super.complete(false);
         return true;
     }
 

@@ -54,10 +54,10 @@ export class WalkAroundModule extends AFKModule {
     private chunkRotationNum = 0;
     private static readonly offsets: Vec3[] = [new Vec3(16, 0, 0), new Vec3(0, 0, 16), new Vec3(-16, 0, 0), new Vec3(0, 0, -16)]
 
-    constructor(bot: Bot, options?: Partial<WalkAroundModuleOptions>) {
+    constructor(bot: Bot, options: Partial<WalkAroundModuleOptions> = {}) {
         super(bot);
         this.lastLocation = null;
-        this.options = !!options ? mergeDeepNoArrayConcat(WalkAroundModuleOptions.standard(bot), options): WalkAroundModuleOptions.standard(bot);
+        this.options = mergeDeepNoArrayConcat(WalkAroundModuleOptions.standard(bot), options);
     }
 
     private findLocation(): Vec3 | null {
@@ -102,7 +102,7 @@ export class WalkAroundModule extends AFKModule {
         return list.length > 0 ? this.options.newChunks ? list[0] : list[list.length -1 - (Math.floor(list.length / 10 * Math.random()))]: null;
     }
 
-    async perform(): Promise<boolean> {
+    public override async perform(): Promise<boolean> {
         super.perform();
         let bl = this.findLocation();
         if (!bl) {
@@ -121,11 +121,10 @@ export class WalkAroundModule extends AFKModule {
         }
     }
 
-    async cancel(): Promise<boolean> {
+    public override async cancel(): Promise<boolean> {
         this.bot.pathfinder.stop();
         this.bot.pathfinder.setGoal(null);
-        
-        super.complete();
+        super.complete(false);
         return true;
     }
 
