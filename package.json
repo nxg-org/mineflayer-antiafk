@@ -1,11 +1,16 @@
 {
     "name": "@nxg-org/mineflayer-antiafk",
     "version": "1.0.0",
-    "description": "Automatic movement for afk usage.",
+    "description": "Automatic movement for minecraft afk usage.",
     "keywords": [
         "mineflayer",
         "mineflayer-plugin",
-        "mineflayer-afk"
+        "mineflayer-afk",
+        "mineflayer-antiafk",
+        "afk",
+        "antiafk",
+        "anti-afk",
+        "minecraft"
     ],
     "repository": {
         "type": "git",
