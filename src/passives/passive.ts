@@ -1,5 +1,5 @@
 import { Bot, BotEvents } from "mineflayer";
-import { mergeDeepNoArrayConcat } from "../utils";
+import { customMerge } from "../utils";
 
 
 /**
@@ -9,22 +9,25 @@ import { mergeDeepNoArrayConcat } from "../utils";
  */
 export interface AFKPassiveOptions {
     enabled: boolean;
-    [others: string]: any
+    [other: string]: any
 }
 
 
-    export abstract class AFKPassive {
+    export abstract class AFKPassive<T extends AFKPassiveOptions> {
         protected eventWanted: keyof BotEvents = "physicsTick";
         protected isActive: boolean = false;
+        public options: T;
 
-        constructor(protected bot: Bot, public options: AFKPassiveOptions = {enabled: false}) {}
+        constructor(protected bot: Bot, options: Partial<T>) {
+            this.options = customMerge({enabled: false}, options);
+        }
 
 
         /**
          * TODO: Make listener's parameter match the BotEvents[eventWanted] function's parameters.
          * Probably not doable.
          */
-        public abstract listener: (...args: any[]) => void;
+        public abstract listener: BotEvents[AFKPassive<T>["eventWanted"]];
 
         public begin() {
             if (this.isActive) return;
@@ -39,7 +42,7 @@ export interface AFKPassiveOptions {
         }
 
         public setOptions(options: Partial<AFKPassiveOptions>, initial?: AFKPassiveOptions): void {
-            this.options = mergeDeepNoArrayConcat(initial ?? this.options, options)
+            this.options = customMerge(initial ?? this.options, options)
         }
 
         public toString(): string {

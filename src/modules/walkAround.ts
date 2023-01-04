@@ -1,7 +1,7 @@
 import { Bot } from "mineflayer";
 import { goals, Pathfinder } from "mineflayer-pathfinder";
 import { Vec3 } from "vec3";
-import { mergeDeepNoArrayConcat } from "../utils";
+import { customMerge } from "../utils";
 import { AFKModule, AFKModuleOptions } from "./module";
 
 
@@ -48,16 +48,14 @@ export class WalkAroundModuleOptions implements AFKModuleOptions {
  * instead of chunk offsets
  * but that requires me to acknowledge when the module is actually started.
  */
-export class WalkAroundModule extends AFKModule {
-    public options: WalkAroundModuleOptions;
+export class WalkAroundModule extends AFKModule<WalkAroundModuleOptions> {
     private lastLocation: Vec3 | null;
     private chunkRotationNum = 0;
     private static readonly offsets: Vec3[] = [new Vec3(16, 0, 0), new Vec3(0, 0, 16), new Vec3(-16, 0, 0), new Vec3(0, 0, -16)]
 
     constructor(bot: Bot, options: Partial<WalkAroundModuleOptions> = {}) {
-        super(bot);
+        super(bot, customMerge(WalkAroundModuleOptions.standard(bot), options));
         this.lastLocation = null;
-        this.options = mergeDeepNoArrayConcat(WalkAroundModuleOptions.standard(bot), options);
     }
 
     private findLocation(): Vec3 | null {
@@ -124,8 +122,7 @@ export class WalkAroundModule extends AFKModule {
     public override async cancel(): Promise<boolean> {
         this.bot.pathfinder.stop();
         this.bot.pathfinder.setGoal(null);
-        super.complete(false);
-        return true;
+        return super.cancel();
     }
 
 }

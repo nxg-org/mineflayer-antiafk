@@ -1,10 +1,10 @@
 import { Bot } from "mineflayer";
-import { AFKModule } from "./module";
+import { AFKModule, AFKModuleOptions } from "./module";
 
-export class LookAroundModule extends AFKModule {
+export class LookAroundModule extends AFKModule<AFKModuleOptions> {
 
-    public constructor(bot: Bot) {
-        super(bot)
+    public constructor(bot: Bot, options: Partial<AFKModuleOptions> = {}) {
+        super(bot, options)
     }
 
     public override async perform(): Promise<boolean> {
@@ -18,7 +18,6 @@ export class LookAroundModule extends AFKModule {
 
     public override async cancel(): Promise<boolean> {
         await this.bot.look(this.bot.entity.yaw, this.bot.entity.pitch, true) // override continued head movement.
-        this.complete(false);
-        return true;
+        return super.cancel();
     }
 }

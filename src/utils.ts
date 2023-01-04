@@ -1,8 +1,10 @@
 import { Bot } from "mineflayer";
 
 import { promisify } from "util";
+import { AFKModule, AFKModuleOptions } from "./modules";
 
 export type AFKConstructor<T> = new (bot: Bot, ...any: any[]) => T
+
 
 
 export const sleep = promisify(setTimeout);
@@ -15,7 +17,7 @@ export const sleep = promisify(setTimeout);
 * @param {...object} objects - Objects to merge
 * @returns {object} New object with merged key/values
 */
-export function mergeDeepNoArrayConcat(...objects: any[]) {
+export function customMerge(...objects: any[]) {
     const isObject = (obj: any) => obj && typeof obj === 'object';
 
     return objects.reduce((prev, obj) => {
@@ -27,7 +29,7 @@ export function mergeDeepNoArrayConcat(...objects: any[]) {
                 prev[key] = oVal//pVal.concat(...oVal);
             }
             else if (isObject(pVal) && isObject(oVal)) {
-                prev[key] = mergeDeepNoArrayConcat(pVal, oVal);
+                prev[key] = customMerge(pVal, oVal);
             }
             else {
                 prev[key] = oVal;

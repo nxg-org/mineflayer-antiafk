@@ -3,17 +3,17 @@ import { Bot } from "mineflayer";
 import { AFKModule, AFKModuleOptions, DEFAULT_MODULES, MODULE_DEFAULT_SETTINGS, AntiAFKModuleOptions } from "./modules";
 import { DEFAULT_PASSIVES, AntiAFKPassiveOptions, PASSIVE_DEFAULT_SETTINGS } from "./passives";
 import { AFKPassive, AFKPassiveOptions } from "./passives/passive";
-import { AFKConstructor, mergeDeepNoArrayConcat } from "./utils";
+import { AFKConstructor, customMerge as customMerge } from "./utils";
+
 
 
 export class AntiAFK extends EventEmitter {
-    public modules: AFKModule[];
-    public passives: AFKPassive[];
+    public modules: AFKModule<AFKModuleOptions>[];
+    public passives: AFKPassive<AFKPassiveOptions>[];
     public moduleOptions!: AntiAFKModuleOptions;
     public passiveOptions!: AntiAFKPassiveOptions;
-    private lastModule: AFKModule | null;
+    private lastModule: AFKModule<AFKModuleOptions> | null;
     private shouldStop: boolean = false;
-
 
     constructor(private bot: Bot, moduleOptions: AntiAFKModuleOptions = {}, passiveOptions: AntiAFKPassiveOptions = {}) {
         super();
@@ -24,18 +24,16 @@ export class AntiAFK extends EventEmitter {
         this.lastModule = null;
     }
 
-
     public get isActive(): boolean {
         return this.modules.some(e => e.isActive)
     }
 
-    public get currentlyActive(): AFKModule | undefined {
+    public get currentlyActive(): AFKModule<AFKModuleOptions> | undefined {
         return this.modules.find(m => m.isActive);
     }
 
-
-    public setModuleOptions(options: Partial<AntiAFKModuleOptions>, initial?: AntiAFKModuleOptions) {
-        this.moduleOptions = mergeDeepNoArrayConcat(initial ?? this.moduleOptions, options);
+    public setModuleOptions(options: AntiAFKModuleOptions, initial?: AntiAFKModuleOptions) {
+        this.moduleOptions = customMerge(initial ?? this.moduleOptions, options);
         for (const option in this.moduleOptions) {
             if (this.moduleOptions[option]) {
                 const mod = this.modules.find(m => m.constructor.name == option);
@@ -44,13 +42,15 @@ export class AntiAFK extends EventEmitter {
         }
     }
 
-    public setOptionsForModule(module: AFKConstructor<AFKModule>, settings: AFKModuleOptions) {
-        this.moduleOptions[module.name] = settings;
-        this.modules.find(m => m.constructor.name == module.constructor.name)?.setOptions(settings);
+    public setOptionsForModule<T extends AFKModule<AFKModuleOptions>>(module: AFKConstructor<T> , settings: Partial<T["options"]>) {
+        console.log(this.moduleOptions[module.name], module.name)
+        console.log(this.modules.map(m => [m.constructor.name]))
+        this.moduleOptions[module.name] = customMerge(this.moduleOptions[module.name], settings);
+        this.modules.find(m => m.constructor.name == module.name)?.setOptions(settings);
     }
 
-    public setPassiveOptions(options: Partial<AntiAFKPassiveOptions>, initial?: AntiAFKPassiveOptions) {
-        this.passiveOptions = mergeDeepNoArrayConcat(initial ?? this.passiveOptions, options);
+    public setPassiveOptions(options: AntiAFKPassiveOptions, initial?: AntiAFKPassiveOptions) {
+        this.passiveOptions = customMerge(initial ?? this.passiveOptions, options);
         for (const option in this.passiveOptions) {
             if (this.passiveOptions[option]) {
                 const mod = this.passives.find(p => p.constructor.name == option);
@@ -62,12 +62,12 @@ export class AntiAFK extends EventEmitter {
         }
     }
 
-    public setOptionsForPassive(passive: AFKConstructor<AFKPassive>, settings: AFKPassiveOptions) {
-        this.passiveOptions[passive.name] = settings;
-        this.passives.find(m => m.constructor.name == passive.constructor.name)?.setOptions(settings);
+    public setOptionsForPassive<T extends AFKPassive<AFKPassiveOptions>>(passive: AFKConstructor<T>, settings: Partial<T["options"]>) {
+        this.passiveOptions[passive.name] = customMerge(this.passiveOptions[passive.name], settings);
+        this.passives.find(m => m.constructor.name == passive.name)?.setOptions(settings);
     }
 
-    public addModules(...mods: AFKConstructor<AFKModule>[]) {
+    public addModules(...mods: AFKConstructor<AFKModule<AFKModuleOptions>>[]) {
         let currentNames = this.modules.map(m => m.constructor.name);
         let toMake = mods.filter(m => !currentNames.includes(m.name))
         let toMakeNames = toMake.map(m => m.name);
@@ -76,14 +76,14 @@ export class AntiAFK extends EventEmitter {
         this.modules = this.modules.concat(toMake.map(m => new m(this.bot, this.moduleOptions[m.name])))
     }
 
-    public removeModules(...mods: AFKConstructor<AFKModule>[]) {
+    public removeModules(...mods: AFKConstructor<AFKModule<AFKModuleOptions>>[]) {
         let toRemoveNames = mods.map(m => m.name);
         toRemoveNames.map(nme => this.moduleOptions[nme] ??= { enabled: false });
         Object.entries(this.moduleOptions).filter(([nme, val]) => toRemoveNames.includes(nme)).map(([nme, val]) => val.enabled = false);
         this.modules = this.modules.filter(m => !toRemoveNames.includes(m.constructor.name))
     }
 
-    public addPassives(...passives: AFKConstructor<AFKPassive>[]) {
+    public addPassives(...passives: AFKConstructor<AFKPassive<AFKPassiveOptions>>[]) {
         let currentNames = this.passives.map(m => m.constructor.name);
         let toMake = passives.filter(m => !currentNames.includes(m.name))
         let toMakeNames = toMake.map(m => m.name);
@@ -92,7 +92,7 @@ export class AntiAFK extends EventEmitter {
         this.passives = this.passives.concat(toMake.map(m => new m(this.bot, this.passiveOptions[m.name])))
     }
 
-    public removePassives(...passives: AFKConstructor<AFKPassive>[]) {
+    public removePassives(...passives: AFKConstructor<AFKPassive<AFKPassiveOptions>>[]) {
         let toRemoveNames = passives.map(m => m.constructor.name);
         this.passives.filter(m => toRemoveNames.includes(m.constructor.name)).map(m => m.stop());
         toRemoveNames.map(nme => this.passiveOptions[nme] ??= { enabled: false });
@@ -100,14 +100,14 @@ export class AntiAFK extends EventEmitter {
         this.passives = this.passives.filter(m => !toRemoveNames.includes(m.constructor.name))
     }
 
-    public isModuleEnabled(mod: AFKConstructor<AFKModule> | AFKModule): boolean {
+    public isModuleEnabled(mod: AFKConstructor<AFKModule<AFKModuleOptions>> | AFKModule<AFKModuleOptions>): boolean {
         if (mod instanceof AFKModule) {
             return !!this.moduleOptions[mod.constructor.name]?.enabled;
         }
         return !!this.moduleOptions[mod.name]?.enabled
     }
 
-    private getLessRandomModule(): AFKModule {
+    private getLessRandomModule(): AFKModule<AFKModuleOptions> {
         const passiveMods = this.modules.filter(m => !m.isActive && this.isModuleEnabled(m) && m != this.lastModule);
         return passiveMods[Math.floor(passiveMods.length * Math.random())]
     }

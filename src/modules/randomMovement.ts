@@ -1,14 +1,14 @@
 import { Bot, ControlState } from "mineflayer";
 import { sleep } from "../utils";
-import { AFKModule } from "./module";
+import { AFKModule, AFKModuleOptions } from "./module";
 
-export class RandomMovementModule extends AFKModule {
+export class RandomMovementModule extends AFKModule<AFKModuleOptions> {
 
     private static readonly controlStates: ControlState[] = ["jump", "sprint", "sneak", "left", "right", "forward", "back"]
     private readonly liquidBlocks: Set<number>;
 
-    public constructor(bot: Bot) {
-        super(bot)
+    public constructor(bot: Bot, options: Partial<AFKModuleOptions> = {}) {
+        super(bot, options)
 
         this.liquidBlocks = !!bot["pathfinder"]?.movements
         ? bot["pathfinder"]?.movements.liquids
@@ -49,12 +49,4 @@ export class RandomMovementModule extends AFKModule {
         RandomMovementModule.controlStates.map(name => this.bot.setControlState(name, false))
         super.complete(success)
     }
-
-    public override async cancel(): Promise<boolean> {
-        this.complete(false);
-        return true;
-    }
-
-
-
 }

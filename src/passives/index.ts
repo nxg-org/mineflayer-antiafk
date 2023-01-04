@@ -7,7 +7,7 @@ import { AFKPassive, AFKPassiveOptions } from "./passive";
 
 export type AntiAFKPassiveOptions = { [key: string]: AFKPassiveOptions }
 
-export const DEFAULT_PASSIVES: AFKConstructor<AFKPassive>[] = [KillAuraPassive]
+export const DEFAULT_PASSIVES: AFKConstructor<AFKPassive<AFKPassiveOptions>>[] = [KillAuraPassive]
 
 export const PASSIVE_DEFAULT_SETTINGS = {
     KillAuraPassive: {

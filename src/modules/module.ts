@@ -1,6 +1,6 @@
 import { Bot } from "mineflayer";
-import { mergeDeepNoArrayConcat } from "../utils";
-
+import { customMerge as customMerge } from "../utils";
+import type { AntiAFK } from "../antiafk";
 
 
 export interface AFKModuleOptions {
@@ -8,36 +8,78 @@ export interface AFKModuleOptions {
     [other: string]: any
 }
 
-export abstract class AFKModule {
+export abstract class AFKModule<T extends AFKModuleOptions> {
+    /**
+     * Whether or not the module should currently be running.
+     */
     public isActive: boolean;
-    
-    public constructor(protected bot: Bot, public options: AFKModuleOptions = {enabled: false}) {
+
+    /**
+     * Helper "breaking boolean" from running while loops.
+     * Use this to make {@link AntiAFK.prototype.forceStop | forceStop()} more effective.
+     */
+    protected shouldCancel: boolean = false;
+
+    /**
+     * Options for module.
+     * Note: This is usually overriden. Just a default.
+     */
+    public options: T
+
+
+    public constructor(protected bot: Bot,  options: Partial<T>) {
         this.isActive = false;
+        this.options = customMerge({enabled: false}, options)
     }
 
+    /**
+     * Function to perform when entering module.
+     * When implementing, always call super.perform() OR set isActive to true.
+     * @returns {boolean} Whether module's action succeeded or not.
+     */
     public async perform(): Promise<boolean> {
         this.isActive = true;
         return true;
 
     }
-    public abstract cancel(): Promise<boolean>;
-    
 
     /**
+     * Force cancel the module by setting {@link AFKModule.prototype.shouldCancel | shouldCancel} to true.
+     * When implementing a module, all loops should break at {@link AFKModule.prototype.shouldCancel | shouldCancel} being true.
+     * @returns {boolean} Whether or not cancellation of module completed successfully.
+     */
+    public async cancel(): Promise<boolean> {
+        this.shouldCancel = true;
+        this.complete(false)
+        return true;
+    }
+    
+    /**
      * Set options of current module.
-     * @param options 
-     * @param initial 
+     * @param {Partial<AFKModuleOptions> options Options for module.
+     * @param {AFKModuleOptions} initial Initial options for module,
+     *     {@link AFKModule.prototype.options | already specified options} if not.
      */
     public setOptions(options: Partial<AFKModuleOptions>, initial?: AFKModuleOptions): void {
-        this.options = mergeDeepNoArrayConcat(initial ?? this.options, options)
+        this.options = customMerge(initial ?? this.options, options)
     }
 
-    public complete(...any: any[]): void {
+
+    /**
+     * Handle completion of module
+     * @param toEmit 
+     */
+    public complete(success: boolean, ...toEmit: any[]): void {
         this.isActive = false;
-        this.signal("module_complete", ...any);
+        this.signal("module_complete", success, ...toEmit);
     };
-    public signal(str: string, ...any: any[]) {
-        this.bot.antiafk.emit(str, this, ...any)
+
+    /**
+     * Signal completion of module.
+     * @param {...any[]} toEmit Items to emit.
+     */
+    public signal(event: string, success: boolean, ...any: any[]) {
+        this.bot.antiafk.emit(event, success, this, ...any)
     }
 
     public toString(): string {

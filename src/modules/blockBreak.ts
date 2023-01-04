@@ -3,7 +3,7 @@ import { AFKModule, AFKModuleOptions } from "./module";
 import { Vec3 } from "vec3";
 import type { Block } from "prismarine-block"
 import { goals, Movements } from "mineflayer-pathfinder";
-import { mergeDeepNoArrayConcat } from "../utils";
+import { customMerge as customMerge } from "../utils";
 
 
 export class BlockBreakModuleOptions implements AFKModuleOptions {
@@ -25,8 +25,7 @@ export class BlockBreakModuleOptions implements AFKModuleOptions {
 }
 
 
-export class BlockBreakModule extends AFKModule {
-    public options: BlockBreakModuleOptions;
+export class BlockBreakModule extends AFKModule<BlockBreakModuleOptions> {
     private lastLocation: Vec3 | null;
     private avoidSurroundingBlocks: number[];
 
@@ -38,9 +37,8 @@ export class BlockBreakModule extends AFKModule {
 
 
     constructor(bot: Bot, options: Partial<BlockBreakModuleOptions> = {}) {
-        super(bot)
+        super(bot, customMerge(BlockBreakModuleOptions.standard(bot), options))
         this.lastLocation = null;
-        this.options = mergeDeepNoArrayConcat(BlockBreakModuleOptions.standard(bot), options);
         this.avoidSurroundingBlocks = [bot.registry.blocksByName.water.id, bot.registry.blocksByName.lava.id];
         // this.breakingMovements = new Movements(bot, bot.registry);
         // this.breakingMovements.blocksToAvoid.add(bot.registry.blocksByName.water.id);
@@ -142,9 +140,7 @@ export class BlockBreakModule extends AFKModule {
         this.bot.pathfinder.stop();
         this.bot.pathfinder.setGoal(null);
         this.bot.stopDigging();
-
-        this.complete(false);
-        return true;
+        return super.cancel();
     }
 
 
