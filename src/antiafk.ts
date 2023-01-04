@@ -60,7 +60,6 @@ export class AntiAFK extends EventEmitter {
                 }
             }
         }
-        this.bot.autoEat.enabled = !!this.passiveOptions.eat.enabled
     }
 
     public setOptionsForPassive(passive: AFKConstructor<AFKPassive>, settings: AFKPassiveOptions) {

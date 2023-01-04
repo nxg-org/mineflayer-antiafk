@@ -14,8 +14,6 @@ export interface AFKPassiveOptions {
 
 
     export abstract class AFKPassive {
-
-
         protected eventWanted: keyof BotEvents = "physicsTick";
         protected isActive: boolean = false;
 
@@ -43,7 +41,6 @@ export interface AFKPassiveOptions {
         public setOptions(options: Partial<AFKPassiveOptions>, initial?: AFKPassiveOptions): void {
             this.options = mergeDeepNoArrayConcat(initial ?? this.options, options)
         }
-
 
         public toString(): string {
             return `${this.constructor.name}{isActive: ${this.isActive}}`

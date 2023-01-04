@@ -1,6 +1,5 @@
 import { Bot, BotEvents, createBot } from "mineflayer";
 import antiafk, { AFKModule, AFKModuleOptions, AFKPassive } from "./index";
-import autoEat from "@nxg-org/mineflayer-auto-eat";
 import type {Block} from "prismarine-block"
 
 import { promisify } from "util";
@@ -12,7 +11,6 @@ const bot = createBot({
     port: Number(process.argv[3]) ?? 25565,
 });
 
-bot.loadPlugin(autoEat);
 bot.loadPlugin(antiafk);
 
 

@@ -12,8 +12,8 @@ export const DEFAULT_PASSIVES: AFKConstructor<AFKPassive>[] = [KillAuraPassive]
 export const PASSIVE_DEFAULT_SETTINGS = {
     KillAuraPassive: {
         enabled: true,
-        multi: true,
-        reach: 5
+        multi: false,
+        reach: 3
     },
     eat: {
         enabled: true
