@@ -32,12 +32,12 @@ export abstract class AFKModule {
         this.options = mergeDeepNoArrayConcat(initial ?? this.options, options)
     }
 
-    public complete(...any: any): void {
+    public complete(...any: any[]): void {
         this.isActive = false;
         this.signal("module_complete", ...any);
     };
-    public signal(str: string, ...any: any) {
-        this.bot.antiafk.emit(str, ...any)
+    public signal(str: string, ...any: any[]) {
+        this.bot.antiafk.emit(str, this, ...any)
     }
 
     public toString(): string {

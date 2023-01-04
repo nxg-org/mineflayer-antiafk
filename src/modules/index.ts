@@ -11,7 +11,6 @@ import { AFKConstructor } from "../utils";
 export type AntiAFKModuleOptions = { [key: string]: AFKModuleOptions }
 
 
-
 export const DEFAULT_MODULES: AFKConstructor<AFKModule>[] = 
     require.resolve("mineflayer-pathfinder") ? 
     [LookAroundModule, RandomMovementModule, WalkAroundModule, ChatBotModule, BlockBreakModule] :
