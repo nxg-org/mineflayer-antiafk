@@ -123,17 +123,12 @@ bot.once("spawn", async () => {
 
     // demonstration of setting passive options
     // passives follow the same conventions as modules
-    // ONE CAVEAT: "eat" = enable mineflayer-auto-eat.
     bot.antiafk.setPassiveOptions({
         KillAuraPassive: {
             enabled: true,
             multi: true,
             reach: 5
         },
-        // special since relies on nxg-org/mineflayer-auto-eat.
-        eat: {
-            enabled: true
-        }
     })
 
     // dynamically remove modules.
