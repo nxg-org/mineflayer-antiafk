@@ -4,11 +4,18 @@ import { AFKModule } from "./module";
 
 export class RandomMovementModule extends AFKModule {
 
-
     private static readonly controlStates: ControlState[] = ["jump", "sprint", "sneak", "left", "right", "forward", "back"]
+    private readonly liquidBlocks: Set<number>;
 
     public constructor(bot: Bot) {
         super(bot)
+
+        this.liquidBlocks = !!bot["pathfinder"]?.movements
+        ? bot["pathfinder"]?.movements.liquids
+        : new Set([
+            bot.registry.blocksByName.water.id,
+            bot.registry.blocksByName.lava.id,
+          ]);
     }
 
 
@@ -21,14 +28,14 @@ export class RandomMovementModule extends AFKModule {
      */
     public override async perform(): Promise<boolean> {
         super.perform();
-        if (this.bot.pathfinder.isMoving()) {
+        if (this.bot["pathfinder"]?.isMoving()) {
             this.complete(false);
             return false;
         }
         let currentStates: [ControlState, boolean][] = RandomMovementModule.controlStates.map(name => [name, Math.random() > 0.5])
         currentStates.map(([name, val]) => this.bot.setControlState(name, val))
 
-        if (this.bot.pathfinder.movements.liquids.has(this.bot.blockAt(this.bot.entity.position)?.type ?? -1)) {
+        if (this.liquidBlocks.has(this.bot.blockAt(this.bot.entity.position)?.type ?? -1)) {
             this.bot.setControlState("jump", true);
         }
         
@@ -44,8 +51,7 @@ export class RandomMovementModule extends AFKModule {
     }
 
     public override async cancel(): Promise<boolean> {
-        // if (this.bot.pathfinder.isMoving()) return false;
-        super.complete(false);
+        this.complete(false);
         return true;
     }
 
