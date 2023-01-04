@@ -7,6 +7,12 @@ import { AFKConstructor, customMerge as customMerge } from "./utils";
 
 
 
+/**
+ * Note: this currently does not support dynamically loading/unloading modules with strings.
+ * You'll have to use the import to do it.
+ * 
+ * TODO: Abstract this whole thing to decorators.
+ */
 export class AntiAFK extends EventEmitter {
     public modules: AFKModule<AFKModuleOptions>[];
     public passives: AFKPassive<AFKPassiveOptions>[];
@@ -43,8 +49,6 @@ export class AntiAFK extends EventEmitter {
     }
 
     public setOptionsForModule<T extends AFKModule<AFKModuleOptions>>(module: AFKConstructor<T> , settings: Partial<T["options"]>) {
-        console.log(this.moduleOptions[module.name], module.name)
-        console.log(this.modules.map(m => [m.constructor.name]))
         this.moduleOptions[module.name] = customMerge(this.moduleOptions[module.name], settings);
         this.modules.find(m => m.constructor.name == module.name)?.setOptions(settings);
     }
@@ -119,6 +123,7 @@ export class AntiAFK extends EventEmitter {
             if (!this.lastModule) return false;
             this.bot.chat(this.lastModule.constructor.name);
             this.passives.map(p => p.options.enabled ? p.begin() : p.stop())
+            this.emit('moduleStarted', this.lastModule);
             await this.lastModule.perform();
         }
         return true;

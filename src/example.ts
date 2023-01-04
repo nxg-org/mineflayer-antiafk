@@ -5,11 +5,8 @@ import antiafk, {
   AFKPassive,
   AFKPassiveOptions,
 } from "./index";
-import type { Block } from "prismarine-block";
 
 import { promisify } from "util";
-import { AFKConstructor } from "./utils";
-import { ChatBotModule, WalkAroundModule } from "./modules";
 import { KillAuraPassive } from "./passives/killaura";
 const sleep = promisify(setTimeout);
 
@@ -38,7 +35,7 @@ class TestModule extends AFKModule<TestModuleOptions> {
 
   public override async perform(): Promise<boolean> {
     super.perform();
-    
+
     this.bot.chat("began test module. " + this.options.messageToSend);
     await sleep(1000);
 
@@ -69,6 +66,8 @@ bot.once("spawn", async () => {
   bot.antiafk.addModules(TestModule);
   bot.antiafk.addPassives(TestPassive);
 
+  bot.antiafk.on('moduleStarted', (module: AFKModule<AFKPassiveOptions>) => console.log(module.constructor.name))
+
 
   // Weak type coercion. 
   bot.antiafk.setModuleOptions({
@@ -97,7 +96,7 @@ bot.once("spawn", async () => {
       enabled: true,
       random: false,
       messages: ["test", "test1", "test2"],
-      delay: 1000,
+      delay: 2000,
       variation: 300,
     },
     LookAroundModule: {
@@ -109,9 +108,9 @@ bot.once("spawn", async () => {
     BlockBreakModule: {
       enabled: true,
       // locate all easily broken blocks via this method.
-      preferBlockIds: Object.values(bot.registry.blocks)
+      preferBlockIds: new Set(Object.values(bot.registry.blocks)
         .filter((b) => b.hardness && b.hardness <= 0.5)
-        .map((b) => b.id),
+        .map((b) => b.id)),
     },
   });
 
@@ -128,7 +127,8 @@ bot.once("spawn", async () => {
   bot.antiafk.setOptionsForPassive(KillAuraPassive, {
     enabled: true,
     multi: false,
-    reach: 3
+    reach: 3,
+    playerWhitelist: new Set(["Generel_Schwerz"])
   })
 
   // dynamically remove modules.
@@ -152,3 +152,8 @@ bot.on("chat", async (username, message) => {
       break;
   }
 });
+
+
+bot.on('error', (error) => console.log('bot end', error))
+bot._client.on('end', (reason) => console.log('client end', reason))
+bot._client.on('error', (error) => console.log('client error', error))

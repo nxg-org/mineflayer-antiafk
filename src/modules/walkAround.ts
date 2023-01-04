@@ -1,8 +1,9 @@
 import { Bot } from "mineflayer";
-import { goals, Pathfinder } from "mineflayer-pathfinder";
+import { goals, Movements, Pathfinder } from "mineflayer-pathfinder";
 import { Vec3 } from "vec3";
 import { customMerge } from "../utils";
 import { AFKModule, AFKModuleOptions } from "./module";
+import registry from "prismarine-registry";
 
 
 export class WalkAroundModuleOptions implements AFKModuleOptions {
@@ -11,8 +12,8 @@ export class WalkAroundModuleOptions implements AFKModuleOptions {
         public newChunks: boolean = false,
         public rotateChunks: boolean = false,
         // public stayNearOrigin: boolean = false,
-        public preferBlockIds: number[] = [],
-        public avoidBlockIds: number[] = [],
+        public preferBlockIds: Set<number> = new Set(),
+        public avoidBlockIds: Set<number> = new Set(),
         public timeout: number = 10000,
         public searchRadius: number = 16
     ) { }
@@ -25,8 +26,8 @@ export class WalkAroundModuleOptions implements AFKModuleOptions {
             false, 
             false, 
             // false,
-            [bot.registry.blocksByName.grass.id, bot.registry.blocksByName.cobblestone.id], 
-            [bot.registry.blocksByName.water.id, bot.registry.blocksByName.lava.id, bot.registry.blocksByName.air.id]
+            new Set([bot.registry.blocksByName.grass.id, bot.registry.blocksByName.cobblestone.id]),
+            new Set([bot.registry.blocksByName.water.id, bot.registry.blocksByName.lava.id, bot.registry.blocksByName.air.id])
         )   
     }
     public static TwoBTwoT(bot: Bot) {
@@ -35,8 +36,8 @@ export class WalkAroundModuleOptions implements AFKModuleOptions {
             true, 
             true, 
             // true,
-            [bot.registry.blocksByName.grass.id], 
-            [bot.registry.blocksByName.water.id, bot.registry.blocksByName.lava.id, bot.registry.blocksByName.air.id]
+            new Set([bot.registry.blocksByName.grass.id]),
+            new Set([bot.registry.blocksByName.water.id, bot.registry.blocksByName.lava.id, bot.registry.blocksByName.air.id])
         )
     }
 }
@@ -66,7 +67,7 @@ export class WalkAroundModule extends AFKModule<WalkAroundModuleOptions> {
             point = this.bot.entity.position;
         }
         let list = this.bot.findBlocks({
-            matching: (b) => this.options.preferBlockIds.includes(b.type),
+            matching: (b) => this.options.preferBlockIds.has(b.type),
             maxDistance: this.options.searchRadius,
             count: 400,
             point
@@ -76,7 +77,7 @@ export class WalkAroundModule extends AFKModule<WalkAroundModuleOptions> {
         list = list.filter(bl => !this.lastLocation?.equals(bl));
 
         list = list.length > 0 ? list : this.bot.findBlocks({
-            matching: (b) => !this.options.avoidBlockIds.includes(b.type),
+            matching: (b) => !this.options.avoidBlockIds.has(b.type),
             maxDistance: this.options.searchRadius,
             count: 400,
             point
@@ -104,9 +105,11 @@ export class WalkAroundModule extends AFKModule<WalkAroundModuleOptions> {
         super.perform();
         let bl = this.findLocation();
         if (!bl) {
-            super.complete(false);
+            this.complete(false);
             return false;
         }
+
+
         try {
             await this.bot.pathfinder.goto(new goals.GoalGetToBlock(bl.x, bl.y, bl.z))
             this.lastLocation = this.bot.entity.position.floored();

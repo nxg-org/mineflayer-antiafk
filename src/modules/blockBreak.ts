@@ -9,16 +9,16 @@ import { customMerge as customMerge } from "../utils";
 export class BlockBreakModuleOptions implements AFKModuleOptions {
     constructor(
         public enabled: boolean = false,
-        public preferBlockIds: number[] = [],
-        public avoidBlockIds: number[] = [],
+        public preferBlockIds: Set<number> = new Set(),
+        public avoidBlockIds: Set<number> = new Set(),
         public searchRadius: number = 16
     ) { }
 
     public static standard(bot: Bot, maxGoodHardness: number = 0.5, minAvoidHardness: number = 1.4) {
         return new BlockBreakModuleOptions(
             false,
-            Object.values(bot.registry.blocks).filter(b => b.hardness && b.hardness <= maxGoodHardness).map(b => b.id),
-            Object.values(bot.registry.blocks).filter(b => b.hardness && b.hardness >= minAvoidHardness).map(b => b.id),
+            new Set(Object.values(bot.registry.blocks).filter(b => b.hardness && b.hardness <= maxGoodHardness).map(b => b.id)),
+            new Set(Object.values(bot.registry.blocks).filter(b => b.hardness && b.hardness >= minAvoidHardness).map(b => b.id)),
             16
         )
     }
@@ -72,15 +72,16 @@ export class BlockBreakModule extends AFKModule<BlockBreakModuleOptions> {
     }
 
     private findBlock(): Block | null {
+        console.log(this.options.preferBlockIds)
         let list = this.bot.findBlocks({
-            matching: (b) => this.options.preferBlockIds.includes(b.type),
+            matching: (b) => this.options.preferBlockIds.has(b.type),
             maxDistance: this.options.searchRadius,
             count: 400,
         });
 
         if (!this.checkBlockList(list)) {
             list = this.bot.findBlocks({
-                matching: (b) => !this.options.avoidBlockIds.includes(b.type),
+                matching: (b) => !this.options.avoidBlockIds.has(b.type),
                 maxDistance: this.options.searchRadius,
                 count: 400,
             });

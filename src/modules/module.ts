@@ -61,7 +61,9 @@ export abstract class AFKModule<T extends AFKModuleOptions> {
      *     {@link AFKModule.prototype.options | already specified options} if not.
      */
     public setOptions(options: Partial<AFKModuleOptions>, initial?: AFKModuleOptions): void {
+        console.log(this.constructor.name, options, !!initial, initial ?? this.options)
         this.options = customMerge(initial ?? this.options, options)
+        console.log(this.options)
     }
 
 

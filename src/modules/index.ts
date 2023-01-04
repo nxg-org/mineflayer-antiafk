@@ -42,8 +42,8 @@ export const MODULE_DEFAULT_SETTINGS =
             BlockBreakModule: {
                 enabled: true,
                 // locate all easily broken blocks via this method.
-                preferBlockIds: Object.values(bot.registry.blocks).filter(b => b.hardness && b.hardness <= 0.5).map(b => b.id),
-                avoidBlockIds: Object.values(bot.registry.blocks).filter(b => b.hardness && b.hardness >= 1.4).map(b => b.id),
+                preferBlockIds: new Set(Object.values(bot.registry.blocks).filter(b => b.hardness && b.hardness <= 0.5).map(b => b.id)),
+                avoidBlockIds: new Set(Object.values(bot.registry.blocks).filter(b => b.hardness && b.hardness >= 1.4).map(b => b.id)),
             },
         }
     } : 

@@ -28,6 +28,9 @@ export function customMerge(...objects: any[]) {
             if (Array.isArray(pVal) && Array.isArray(oVal)) {
                 prev[key] = oVal//pVal.concat(...oVal);
             }
+            else if (pVal instanceof Set && oVal instanceof Set) {
+                prev[key] = oVal;
+            }
             else if (isObject(pVal) && isObject(oVal)) {
                 prev[key] = customMerge(pVal, oVal);
             }

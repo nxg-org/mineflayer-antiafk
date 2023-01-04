@@ -57,6 +57,7 @@ export class KillAuraPassive extends AFKPassive<KillAuraPassiveOptions> {
 
             // get nearest entity, check if hittable and not in blacklist.
             let target = this.bot.nearestEntity(e => 
+                this.hittableTypes.has(e.type) && 
                 this.bot.util.entity.getDistanceToEntity(e) < this.options.reach &&  
                 !this.options.entityBlacklist.has(e.entityType ?? -1) &&
                 !(e.username && this.options.playerWhitelist.has(e.username))
