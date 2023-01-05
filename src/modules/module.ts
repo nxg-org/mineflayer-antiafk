@@ -71,15 +71,16 @@ export abstract class AFKModule<T extends AFKModuleOptions> {
      */
     public complete(success: boolean, ...toEmit: any[]): void {
         this.isActive = false;
-        this.signal("module_complete", success, ...toEmit);
+        this.signal("moduleCompleted", success, ...toEmit);
     };
 
     /**
      * Signal completion of module.
-     * @param {...any[]} toEmit Items to emit.
+     * @param {string} msg Name of event 
+     * @param {...any[]} any Other data to send.
      */
-    public signal(event: string, success: boolean, ...any: any[]) {
-        this.bot.antiafk.emit(event, success, this, ...any)
+    public signal(msg: string, ...any: any[]) {
+        this.bot.antiafk.emit("custom", msg, this, ...any)
     }
 
     public toString(): string {

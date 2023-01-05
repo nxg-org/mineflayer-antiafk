@@ -4,8 +4,16 @@ import { AFKModule, AFKModuleOptions, DEFAULT_MODULES, MODULE_DEFAULT_SETTINGS, 
 import { DEFAULT_PASSIVES, AntiAFKPassiveOptions, PASSIVE_DEFAULT_SETTINGS } from "./passives";
 import { AFKPassive, AFKPassiveOptions } from "./passives/passive";
 import { AFKConstructor, customMerge as customMerge } from "./utils";
+import StrictEventEmitter from 'strict-event-emitter-types';
 
 
+interface AntiAFKEvents {
+    moduleStarted: (mod: AFKModule<AFKModuleOptions>) => void;
+    moduleCompleted: (mod: AFKModule<AFKModuleOptions>, success: boolean, ...any: any[]) => void;
+    custom: (msg: string, mod: AFKModule<AFKModuleOptions>, ...any: any[]) => void;
+};
+
+type AntiAFKEmitter = StrictEventEmitter<EventEmitter, AntiAFKEvents>;
 
 /**
  * Note: this currently does not support dynamically loading/unloading modules with strings.
@@ -13,7 +21,7 @@ import { AFKConstructor, customMerge as customMerge } from "./utils";
  * 
  * TODO: Abstract this whole thing to decorators.
  */
-export class AntiAFK extends EventEmitter {
+export class AntiAFK extends (EventEmitter as { new(): AntiAFKEmitter })  {
     public modules: AFKModule<AFKModuleOptions>[];
     public passives: AFKPassive<AFKPassiveOptions>[];
     public moduleOptions!: AntiAFKModuleOptions;
