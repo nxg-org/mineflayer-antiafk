@@ -87,7 +87,6 @@ export class WalkAroundModule extends AFKModule<WalkAroundModuleOptions> {
             && this.bot.blockAt(bl.offset(0, 1, 0))!.type == this.bot.registry.blocksByName.air.id
             && this.bot.blockAt(bl.offset(0, 1, 0))!.type == this.bot.registry.blocksByName.air.id)
 
-        // console.log("whatever:", list, list.length);
         if (this.lastLocation) {
             if (this.options.newChunks) list = list.sort((a, b) => this.lastLocation!.distanceSquared(b) - this.lastLocation!.distanceSquared(a));
             else list = list.sort((a, b) => this.lastLocation!.distanceSquared(a) - this.lastLocation!.distanceSquared(b));

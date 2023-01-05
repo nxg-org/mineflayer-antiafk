@@ -72,7 +72,6 @@ export class BlockBreakModule extends AFKModule<BlockBreakModuleOptions> {
     }
 
     private findBlock(): Block | null {
-        console.log(this.options.preferBlockIds)
         let list = this.bot.findBlocks({
             matching: (b) => this.options.preferBlockIds.has(b.type),
             maxDistance: this.options.searchRadius,

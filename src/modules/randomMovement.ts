@@ -16,8 +16,6 @@ export class RandomMovementModule extends AFKModule<AFKModuleOptions> {
             bot.registry.blocksByName.water.id,
             bot.registry.blocksByName.lava.id,
           ]);
-
-          console.log(!!bot["pathfinder"], this.liquidBlocks)
     }
 
 

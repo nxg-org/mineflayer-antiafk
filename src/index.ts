@@ -22,13 +22,13 @@ export default function plugin(bot: Bot) {
 export function unloadDefaultModules(bot: Bot) {
     if (!bot.hasPlugin(plugin)) throw "AntiAFK plugin is not loaded when trying to unload afk modules!"
     
-    bot.antiafk.removeModules(...DEFAULT_MODULES)
+    bot.antiafk.removeModules(...Object.values(DEFAULT_MODULES))
 }
 
 export function unloadDefaultPassives(bot: Bot) {
     if (!bot.hasPlugin(plugin)) throw "AntiAFK plugin is not loaded when trying to unload afk passives!"
     
-    bot.antiafk.removePassives(...DEFAULT_PASSIVES)
+    bot.antiafk.removePassives(...Object.values(DEFAULT_PASSIVES))
 }
 
 export {AFKModule, AFKModuleOptions, DEFAULT_MODULES, MODULE_DEFAULT_SETTINGS} from "./modules";

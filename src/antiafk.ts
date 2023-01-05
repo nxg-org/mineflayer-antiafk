@@ -1,4 +1,4 @@
-import EventEmitter from "events";
+import {EventEmitter} from "events";
 import { Bot } from "mineflayer";
 import { AFKModule, AFKModuleOptions, DEFAULT_MODULES, MODULE_DEFAULT_SETTINGS, AntiAFKModuleOptions } from "./modules";
 import { DEFAULT_PASSIVES, AntiAFKPassiveOptions, PASSIVE_DEFAULT_SETTINGS } from "./passives";
@@ -23,8 +23,8 @@ export class AntiAFK extends EventEmitter {
 
     constructor(private bot: Bot, moduleOptions: AntiAFKModuleOptions = {}, passiveOptions: AntiAFKPassiveOptions = {}) {
         super();
-        this.modules = DEFAULT_MODULES.map(mod => new mod(bot))
-        this.passives = DEFAULT_PASSIVES.map(passive => new passive(bot))
+        this.modules = Object.values(DEFAULT_MODULES).map(mod => new mod(bot))
+        this.passives = Object.values(DEFAULT_PASSIVES).map(passive => new passive(bot))
         this.setModuleOptions(moduleOptions, MODULE_DEFAULT_SETTINGS(bot));
         this.setPassiveOptions(passiveOptions, PASSIVE_DEFAULT_SETTINGS);
         this.lastModule = null;
@@ -36,6 +36,10 @@ export class AntiAFK extends EventEmitter {
 
     public get currentlyActive(): AFKModule<AFKModuleOptions> | undefined {
         return this.modules.find(m => m.isActive);
+    }
+
+    public get activeModuleNames(): string[] {
+        return this.modules.map(m => m.constructor.name)
     }
 
     public setModuleOptions(options: AntiAFKModuleOptions, initial?: AntiAFKModuleOptions) {
@@ -121,7 +125,6 @@ export class AntiAFK extends EventEmitter {
         while (!this.shouldStop) {
             this.lastModule = this.getLessRandomModule();
             if (!this.lastModule) return false;
-            this.bot.chat(this.lastModule.constructor.name);
             this.passives.map(p => p.options.enabled ? p.begin() : p.stop())
             this.emit('moduleStarted', this.lastModule);
             await this.lastModule.perform();
