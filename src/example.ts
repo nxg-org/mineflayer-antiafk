@@ -28,11 +28,6 @@ interface TestModuleOptions extends AFKModuleOptions {
 // These can be inserted at runtime.
 class TestModule extends AFKModule<TestModuleOptions> {
 
-  public constructor(bot: Bot, options: Partial<TestModuleOptions> = {}) {
-    super(bot, options);
-  }
-
-
   public override async perform(): Promise<boolean> {
     super.perform();
 
@@ -54,6 +49,7 @@ class TestModule extends AFKModule<TestModuleOptions> {
 class TestPassive extends AFKPassive<AFKPassiveOptions> {
   protected eventWanted = "diggingCompleted" as const;
 
+  // sadly, this is still WIP.
   public listener: BotEvents[TestPassive["eventWanted"]] = (block) => {
     console.log([block.name, block.position])
   };
@@ -66,7 +62,7 @@ bot.once("spawn", async () => {
   bot.antiafk.addModules(TestModule);
   bot.antiafk.addPassives(TestPassive);
 
-  bot.antiafk.on('moduleStarted', (module: AFKModule<AFKPassiveOptions>) => console.log(module.constructor.name))
+  bot.antiafk.on('moduleStarted', (module) => console.log(module.constructor.name))
 
 
   // Weak type coercion. 
@@ -95,7 +91,7 @@ bot.once("spawn", async () => {
     ChatBotModule: {
       enabled: true,
       random: false,
-      messages: ["test", "test1", "test2"],
+      messages: ["NextGEN Anti-afk Module", "test", "test1", "test2"],
       delay: 2000,
       variation: 300,
     },

@@ -31,19 +31,11 @@ export class BlockBreakModule extends AFKModule<BlockBreakModuleOptions> {
 
     private readonly offsets: Vec3[] = [new Vec3(1, 0, 0), new Vec3(0, 1, 0), new Vec3(0, 0, -1)]
 
-    // private readonly breakingMovements: Movements;
-
-
-
-
     constructor(bot: Bot, options: Partial<BlockBreakModuleOptions> = {}) {
         super(bot, customMerge(BlockBreakModuleOptions.standard(bot), options))
         this.lastLocation = null;
         this.avoidSurroundingBlocks = [bot.registry.blocksByName.water.id, bot.registry.blocksByName.lava.id];
-        // this.breakingMovements = new Movements(bot, bot.registry);
-        // this.breakingMovements.blocksToAvoid.add(bot.registry.blocksByName.water.id);
     }
-
 
     /**
      * Every block we pass to here is already found.

@@ -10,7 +10,7 @@ export interface ChatBotModuleOptions extends AFKModuleOptions {
     variation: number;
 }
 
-const tmp = { enabled: false, messages: ["NextGEN Anti-afk Module"], random: false, delay: 1200, variation: 150};
+const tmp = { enabled: false, messages: ["NextGEN Anti-afk Module"], random: false, delay: 3000, variation: 150};
 
 export class ChatBotModule extends AFKModule<ChatBotModuleOptions> {
     public constructor(bot: Bot, options: Partial<ChatBotModuleOptions> = {}) {

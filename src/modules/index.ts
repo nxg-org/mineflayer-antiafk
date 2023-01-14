@@ -43,8 +43,8 @@ export const MODULE_DEFAULT_SETTINGS = require.resolve("mineflayer-pathfinder")
         ChatBotModule: {
           enabled: true,
           random: false,
-          messages: ["test", "test1", "test2"],
-          delay: 1000,
+          messages: ["NextGEN Anti-afk Module", "test", "test1", "test2"],
+          delay: 3000,
           variation: 300,
         },
         LookAroundModule: {
@@ -75,7 +75,7 @@ export const MODULE_DEFAULT_SETTINGS = require.resolve("mineflayer-pathfinder")
           enabled: true,
           random: false,
           messages: ["test", "test1", "test2"],
-          delay: 1000,
+          delay: 3000,
           variation: 300,
         },
         LookAroundModule: {
