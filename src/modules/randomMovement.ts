@@ -29,7 +29,7 @@ export class RandomMovementModule extends AFKModule<AFKModuleOptions> {
     public override async perform(): Promise<boolean> {
         super.perform();
         if (this.bot["pathfinder"]?.isMoving()) {
-            this.complete(false);
+            this.complete(false, "pathfinder exists and is already moving.");
             return false;
         }
         let currentStates: [ControlState, boolean][] = RandomMovementModule.controlStates.map(name => [name, Math.random() > 0.5])
@@ -45,8 +45,8 @@ export class RandomMovementModule extends AFKModule<AFKModuleOptions> {
     }
 
 
-    public complete(success: boolean): void {
+    public complete(success: boolean, reason?: string): void {
         RandomMovementModule.controlStates.map(name => this.bot.setControlState(name, false))
-        super.complete(success)
+        super.complete(success, reason)
     }
 }

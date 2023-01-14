@@ -94,7 +94,7 @@ export class BlockBreakModule extends AFKModule<BlockBreakModuleOptions> {
         super.perform();
         let bl = this.findBlock();
         if (!bl) {
-            this.complete(false);
+            this.complete(false, "no suitable blocks to break.");
             return false;
         }
       
@@ -123,7 +123,7 @@ export class BlockBreakModule extends AFKModule<BlockBreakModuleOptions> {
             return true
         } catch (e: any) {
             // just going to end.
-            this.complete(false);
+            this.complete(false, "failed to pathfind to block.");
             return false;
         }
 

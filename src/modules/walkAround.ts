@@ -104,7 +104,7 @@ export class WalkAroundModule extends AFKModule<WalkAroundModuleOptions> {
         super.perform();
         let bl = this.findLocation();
         if (!bl) {
-            this.complete(false);
+            this.complete(false, "no suitable blocks.");
             return false;
         }
 
@@ -116,7 +116,7 @@ export class WalkAroundModule extends AFKModule<WalkAroundModuleOptions> {
             return true
         } catch (e: any) {
             // just going to end.
-            this.complete(false);
+            this.complete(false, "failed to traverse to goal.");
             return false;
         }
     }

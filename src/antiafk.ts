@@ -9,7 +9,7 @@ import StrictEventEmitter from 'strict-event-emitter-types';
 
 interface AntiAFKEvents {
     moduleStarted: (mod: AFKModule<AFKModuleOptions>) => void;
-    moduleCompleted: (mod: AFKModule<AFKModuleOptions>, success: boolean, ...any: any[]) => void;
+    moduleCompleted: (mod: AFKModule<AFKModuleOptions>, success: boolean, reason?: string, ...any: any[]) => void;
     custom: (msg: string, mod: AFKModule<AFKModuleOptions>, ...any: any[]) => void;
 };
 

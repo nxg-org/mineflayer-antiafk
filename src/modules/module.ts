@@ -50,7 +50,7 @@ export abstract class AFKModule<T extends AFKModuleOptions> {
      */
     public async cancel(): Promise<boolean> {
         this.shouldCancel = true;
-        this.complete(false)
+        this.complete(false, "cancelled.")
         return true;
     }
     
@@ -69,9 +69,9 @@ export abstract class AFKModule<T extends AFKModuleOptions> {
      * Handle completion of module
      * @param toEmit 
      */
-    public complete(success: boolean, ...toEmit: any[]): void {
+    public complete(success: boolean, reason?: string, ...toEmit: any[]): void {
         this.isActive = false;
-        this.bot.antiafk.emit("moduleCompleted", this, success, ...toEmit)
+        this.bot.antiafk.emit("moduleCompleted", this, success, reason, ...toEmit)
     };
 
     /**
