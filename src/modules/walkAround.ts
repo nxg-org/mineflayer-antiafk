@@ -36,7 +36,7 @@ export class WalkAroundModuleOptions implements AFKModuleOptions {
             true, 
             true, 
             // true,
-            new Set([bot.registry.blocksByName.grass.id]),
+            new Set([bot.registry.blocksByName.grass.id, bot.registry.blocksByName.cobblestone.id, bot.registry.blocksByName.obsidian.id]),
             new Set([bot.registry.blocksByName.water.id, bot.registry.blocksByName.lava.id, bot.registry.blocksByName.air.id])
         )
     }
