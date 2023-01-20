@@ -16,11 +16,11 @@ type AntiAFKEmitter = StrictEventEmitter<EventEmitter, AntiAFKEvents>;
 
 type ModuleSelector = (cls: AntiAFK) => AFKModule<AFKModuleOptions>;
 
-function getLessRandomModule(cls: AntiAFK): AFKModule<AFKModuleOptions> {
-  let goodMods = cls.modules.filter((m) => !m.isActive && cls.isModuleEnabled(m));
+function getLessRandomModule(cls: AntiAFK): AFKModule<AFKModuleOptions> | null {
+  let goodMods = cls.modules.filter((m) => !m.isActive && cls.isModuleEnabled(m) && cls.lastFailed !== m);
   const notLastModule = goodMods.filter((m) => m != cls.lastModule);
   goodMods = notLastModule.length > 0 ? notLastModule : goodMods;
-  return goodMods[Math.floor(goodMods.length * Math.random())];
+  return goodMods[Math.floor(goodMods.length * Math.random())] ?? null;
 }
 
 /**
@@ -35,8 +35,12 @@ export class AntiAFK extends (EventEmitter as { new (): AntiAFKEmitter }) {
   public moduleOptions!: AntiAFKModuleOptions;
   public passiveOptions!: AntiAFKPassiveOptions;
   private _lastModule: AFKModule<AFKModuleOptions> | null;
+  private _lastFailed: AFKModule<AFKModuleOptions> | null;
   public get lastModule() {
     return this._lastModule;
+  }
+  public get lastFailed() {
+    return this._lastFailed;
   }
   private shouldStop: boolean = false;
   private moduleSelector: ModuleSelector;
@@ -53,7 +57,12 @@ export class AntiAFK extends (EventEmitter as { new (): AntiAFKEmitter }) {
     this.setModuleOptions(moduleOptions, MODULE_DEFAULT_SETTINGS(bot));
     this.setPassiveOptions(passiveOptions, PASSIVE_DEFAULT_SETTINGS);
     this._lastModule = null;
+    this._lastFailed = null;
     this.moduleSelector = moduleSelector ?? getLessRandomModule as any;
+
+    this.on("moduleCompleted", (mod, success) => {
+      if (!success) this._lastFailed = mod;
+    })
   }
 
   public get isActive(): boolean {
