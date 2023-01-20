@@ -173,7 +173,10 @@ export class AntiAFK extends (EventEmitter as { new (): AntiAFKEmitter }) {
     this.shouldStop = false;
     while (!this.shouldStop) {
       this._lastModule = this.moduleSelector(this);
-      if (!this._lastModule) return false;
+      if (!this._lastModule) {
+        this.stop();
+        return false;
+      }
       this.passives.map((p) => (p.options.enabled ? p.begin() : p.stop()));
       this.emit("moduleStarted", this._lastModule);
       await this._lastModule.perform();
