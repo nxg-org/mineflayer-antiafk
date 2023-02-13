@@ -17,9 +17,9 @@
     uuid "^8.3.0"
 
 "@nxg-org/mineflayer-util-plugin@^1.6.0":
-  version "1.6.2"
-  resolved "https://registry.yarnpkg.com/@nxg-org/mineflayer-util-plugin/-/mineflayer-util-plugin-1.6.2.tgz#e9c5566d2338812a329e5bbe5089760bab3e580c"
-  integrity sha512-nIheXeaoYPKOq9RhTMaEBVqFGSz0prMTct2Iq/kzruSbKb+Jx8JZs/vrvQcXHhBcUIcD+YoRq/QAuOs7EqtVRg==
+  version "1.7.9"
+  resolved "https://registry.yarnpkg.com/@nxg-org/mineflayer-util-plugin/-/mineflayer-util-plugin-1.7.9.tgz#4f71b961cba215b54c4d7c9e0b02dc3e285d2bb2"
+  integrity sha512-KGniVUnJcUdYkIcTxBv86BJWZv2ykSWsrhC/TuVkj2FtdfYj5bo/oD3OQH6CFww1V36FDol9Xr6PmC5/DgzExw==
 
 "@types/node@*":
   version "18.11.18"
