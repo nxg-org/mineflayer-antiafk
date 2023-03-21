@@ -37,13 +37,13 @@ export class BlockBreakModuleOptions implements AFKModuleOptions {
   }
 }
 
-export class BlockBreakModule extends AFKModule<BlockBreakModuleOptions> {
+export class BlockBreakModule extends AFKModule<IBlockBreakModuleOptions> {
   private lastLocation: Vec3 | null;
   private avoidSurroundingBlocks: number[];
 
   private readonly offsets: Vec3[] = [new Vec3(1, 0, 0), new Vec3(0, 1, 0), new Vec3(0, 0, -1)];
 
-  constructor(bot: Bot, options: Partial<BlockBreakModuleOptions> = {}) {
+  constructor(bot: Bot, options: Partial<IBlockBreakModuleOptions> = {}) {
     super(bot, customMerge(BlockBreakModuleOptions.standard(bot), options));
     this.lastLocation = null;
     this.avoidSurroundingBlocks = [bot.registry.blocksByName.water.id, bot.registry.blocksByName.lava.id];

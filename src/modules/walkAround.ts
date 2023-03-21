@@ -59,7 +59,7 @@ export class WalkAroundModuleOptions implements IWalkAroundModuleOptions {
  * instead of chunk offsets
  * but that requires me to acknowledge when the module is actually started.
  */
-export class WalkAroundModule extends AFKModule<WalkAroundModuleOptions> {
+export class WalkAroundModule extends AFKModule<IWalkAroundModuleOptions> {
   private lastLocation: Vec3 | null;
   private chunkRotationNum = 0;
   private static readonly offsets: Vec3[] = [
@@ -69,7 +69,7 @@ export class WalkAroundModule extends AFKModule<WalkAroundModuleOptions> {
     new Vec3(0, 0, -16),
   ];
 
-  constructor(bot: Bot, options: Partial<WalkAroundModuleOptions> = {}) {
+  constructor(bot: Bot, options: Partial<IWalkAroundModuleOptions> = {}) {
     super(bot, customMerge(WalkAroundModuleOptions.standard(bot), options));
     this.lastLocation = null;
   }
