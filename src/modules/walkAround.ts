@@ -89,7 +89,9 @@ export class WalkAroundModule extends AFKModule<IWalkAroundModuleOptions> {
   private findLocation(): Vec3 | null {
     let point: Vec3;
     let list: Vec3[];
-
+    const preferBl = new Set(this.options.preferBlockIds)
+    const avoidBl = new Set(this.options.avoidBlockIds)
+    
     // perform check only once if staying in same chunk.
     for (let i = this.options.newChunks ? 0 : 4; i < 4; i++) {
       if (this.options.newChunks) {
@@ -102,7 +104,7 @@ export class WalkAroundModule extends AFKModule<IWalkAroundModuleOptions> {
 
       list = this.bot
         .findBlocks({
-          matching: (b) => this.options.preferBlockIds.includes(b.type),
+          matching: (b) => preferBl.has(b.type),
           maxDistance: this.options.searchRadius,
           count: 400,
           point,
@@ -112,7 +114,7 @@ export class WalkAroundModule extends AFKModule<IWalkAroundModuleOptions> {
       if (list.length === 0) {
         list = this.bot
           .findBlocks({
-            matching: (b) => !this.options.avoidBlockIds.includes(b.type),
+            matching: (b) => !avoidBl.has(b.type),
             maxDistance: this.options.searchRadius,
             count: 1600,
             point,
