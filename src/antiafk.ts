@@ -64,6 +64,7 @@ export class AntiAFK extends (EventEmitter as { new (): AntiAFKEmitter }) {
 
     this.on("moduleCompleted", (mod, success) => {
       if (!success) this._lastFailed = mod;
+      else this._lastFailed = null;
     })
   }
 
