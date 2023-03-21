@@ -32,11 +32,11 @@ export function unloadDefaultPassives(bot: Bot) {
 }
 
 
-import { ChatBotModuleOptions, BlockBreakModuleOptions, WalkAroundModuleOptions } from "./modules";
+import { ChatBotModuleOptions, IBlockBreakModuleOptions, IWalkAroundModuleOptions } from "./modules";
 export type AllModuleSettings = {
-    WalkAroundModule: WalkAroundModuleOptions,
+    WalkAroundModule: IWalkAroundModuleOptions,
     ChatBotModule: ChatBotModuleOptions,
-    BlockBreakModule: BlockBreakModuleOptions,
+    BlockBreakModule: IBlockBreakModuleOptions,
     LookAroundModule: {enabled: boolean}
     RandomMovementModule: {enabled: boolean},
 };

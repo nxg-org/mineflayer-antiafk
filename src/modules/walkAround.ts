@@ -5,7 +5,18 @@ import { customMerge } from "../utils";
 import { AFKModule, AFKModuleOptions } from "./module";
 import registry from "prismarine-registry";
 
-export class WalkAroundModuleOptions implements AFKModuleOptions {
+
+export interface IWalkAroundModuleOptions extends AFKModuleOptions {
+   newChunks: boolean 
+   rotateChunks: boolean
+  //  stayNearOrigin: boolean = false,
+   preferBlockIds: Set<number> 
+   avoidBlockIds: Set<number> 
+   timeout: number
+   searchRadius: number 
+}
+
+export class WalkAroundModuleOptions implements IWalkAroundModuleOptions {
   constructor(
     public enabled: boolean = false,
     public newChunks: boolean = false,
