@@ -1,5 +1,4 @@
 import { Bot } from "mineflayer";
-import type {Entity} from "prismarine-entity";
 import { customMerge } from "../utils";
 import { AFKPassive, AFKPassiveOptions } from "./passive";
 
@@ -48,7 +47,7 @@ export class KillAuraPassive extends AFKPassive<KillAuraPassiveOptions> {
             // filter to only mobs, then filter to hittable entities that are not in blacklist.
             let targets = Object.values(this.bot.entities).filter(e => this.hittableTypes.has(e.type)).
                 filter(e => 
-                    this.bot.util.entity.getDistanceToEntity(e) < this.options.reach &&
+                    this.bot.util.entity.entityDistance(e) < this.options.reach &&
                     !this.options.entityBlacklist.has(e.entityType ?? -1) &&
                     !(e.username && this.options.playerWhitelist.has(e.username))
                 );
@@ -58,7 +57,7 @@ export class KillAuraPassive extends AFKPassive<KillAuraPassiveOptions> {
             // get nearest entity, check if hittable and not in blacklist.
             let target = this.bot.nearestEntity(e => 
                 this.hittableTypes.has(e.type) && 
-                this.bot.util.entity.getDistanceToEntity(e) < this.options.reach &&  
+                this.bot.util.entity.entityDistance(e) < this.options.reach &&  
                 !this.options.entityBlacklist.has(e.entityType ?? -1) &&
                 !(e.username && this.options.playerWhitelist.has(e.username))
             )

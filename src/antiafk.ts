@@ -8,6 +8,7 @@ import StrictEventEmitter from "strict-event-emitter-types";
 
 interface AntiAFKEvents {
   moduleStarted: (mod: AFKModule<AFKModuleOptions>) => void;
+  moduleCanceled: (mod: AFKModule<AFKModuleOptions>) => void;
   moduleCompleted: (mod: AFKModule<AFKModuleOptions>, success: boolean, reason?: string, ...any: any[]) => void;
   custom: (msg: string, mod: AFKModule<AFKModuleOptions>, ...any: any[]) => void;
 }
@@ -44,6 +45,7 @@ export class AntiAFK extends (EventEmitter as { new (): AntiAFKEmitter }) {
   }
   private shouldStop: boolean = false;
   private moduleSelector: ModuleSelector;
+
 
   constructor(
     private bot: Bot,

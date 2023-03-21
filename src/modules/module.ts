@@ -50,7 +50,7 @@ export abstract class AFKModule<T extends AFKModuleOptions> {
      */
     public async cancel(): Promise<boolean> {
         this.shouldCancel = true;
-        this.complete(false, "cancelled.")
+        this.bot.antiafk.emit("moduleCanceled", this)
         return true;
     }
     

@@ -4,7 +4,7 @@ import utilPlugin from "@nxg-org/mineflayer-util-plugin";
 import { AntiAFK } from "./antiafk";
 import {IndexedData} from "minecraft-data"
 
-import { DEFAULT_MODULES } from "./modules";
+import { AFKModuleOptions, DEFAULT_MODULES } from "./modules";
 import { DEFAULT_PASSIVES } from "./passives";
 
 declare module "mineflayer" {
@@ -30,6 +30,16 @@ export function unloadDefaultPassives(bot: Bot) {
     
     bot.antiafk.removePassives(...Object.values(DEFAULT_PASSIVES))
 }
+
+
+import { ChatBotModuleOptions, BlockBreakModuleOptions, WalkAroundModuleOptions } from "./modules";
+export type AllModuleSettings = {
+    WalkAroundModule: WalkAroundModuleOptions,
+    ChatBotModule: ChatBotModuleOptions,
+    BlockBreakModule: BlockBreakModuleOptions,
+    LookAroundModule: {enabled: boolean}
+    RandomMovementModule: {enabled: boolean},
+};
 
 export {AFKModule, AFKModuleOptions, DEFAULT_MODULES, MODULE_DEFAULT_SETTINGS} from "./modules";
 export {AFKPassive, AFKPassiveOptions, DEFAULT_PASSIVES, PASSIVE_DEFAULT_SETTINGS} from "./passives"
