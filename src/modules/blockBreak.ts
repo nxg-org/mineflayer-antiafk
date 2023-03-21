@@ -22,11 +22,11 @@ export class BlockBreakModuleOptions implements AFKModuleOptions {
   public static standard(bot: Bot, maxGoodHardness: number = 0.5, minAvoidHardness: number = 1.4) {
     return new BlockBreakModuleOptions(
       false,
-      Object.values(bot.registry.blocks)
+      bot.registry.blocksArray
         .filter((b) => b.hardness && b.hardness <= maxGoodHardness)
         .map((b) => b.id),
 
-      Object.values(bot.registry.blocks)
+      bot.registry.blocksArray
         .filter((b) => b.hardness && b.hardness >= minAvoidHardness)
         .map((b) => b.id),
       16

@@ -58,16 +58,14 @@ export const MODULE_DEFAULT_SETTINGS: (bot: Bot) => Partial<AllModuleSettings> =
         BlockBreakModule: {
           enabled: true,
           // locate all easily broken blocks via this method.
-          preferBlockIds: new Set(
-            Object.values(bot.registry.blocks)
+          preferBlockIds: bot.registry.blocksArray
               .filter((b) => b.hardness && b.hardness <= 0.5)
               .map((b) => b.id)
-          ),
-          avoidBlockIds: new Set(
-            Object.values(bot.registry.blocks)
+          ,
+          avoidBlockIds: bot.registry.blocksArray
               .filter((b) => b.hardness && b.hardness >= 1.4)
               .map((b) => b.id)
-          ),
+          
         },
       };
     }
