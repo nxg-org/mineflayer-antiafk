@@ -6,32 +6,29 @@ import { goals, Movements } from "mineflayer-pathfinder";
 import { customMerge as customMerge } from "../utils";
 
 export interface IBlockBreakModuleOptions extends AFKModuleOptions {
-  preferBlockIds: Set<number>;
-  avoidBlockIds: Set<number>;
+  preferBlockIds: number[];
+  avoidBlockIds: number[];
   searchRadius: number;
 }
 
 export class BlockBreakModuleOptions implements AFKModuleOptions {
   constructor(
     public enabled: boolean = false,
-    public preferBlockIds: Set<number> = new Set(),
-    public avoidBlockIds: Set<number> = new Set(),
+    public preferBlockIds: number[] = [],
+    public avoidBlockIds: number[] = [],
     public searchRadius: number = 16
   ) {}
 
   public static standard(bot: Bot, maxGoodHardness: number = 0.5, minAvoidHardness: number = 1.4) {
     return new BlockBreakModuleOptions(
       false,
-      new Set(
-        Object.values(bot.registry.blocks)
-          .filter((b) => b.hardness && b.hardness <= maxGoodHardness)
-          .map((b) => b.id)
-      ),
-      new Set(
-        Object.values(bot.registry.blocks)
-          .filter((b) => b.hardness && b.hardness >= minAvoidHardness)
-          .map((b) => b.id)
-      ),
+      Object.values(bot.registry.blocks)
+        .filter((b) => b.hardness && b.hardness <= maxGoodHardness)
+        .map((b) => b.id),
+
+      Object.values(bot.registry.blocks)
+        .filter((b) => b.hardness && b.hardness >= minAvoidHardness)
+        .map((b) => b.id),
       16
     );
   }
@@ -75,14 +72,14 @@ export class BlockBreakModule extends AFKModule<IBlockBreakModuleOptions> {
 
   private findBlock(): Block | null {
     let list = this.bot.findBlocks({
-      matching: (b) => this.options.preferBlockIds.has(b.type),
+      matching: (b) => this.options.preferBlockIds.includes(b.type),
       maxDistance: this.options.searchRadius,
       count: 400,
     });
 
     if (!this.checkBlockList(list)) {
       list = this.bot.findBlocks({
-        matching: (b) => !this.options.avoidBlockIds.has(b.type),
+        matching: (b) => !this.options.avoidBlockIds.includes(b.type),
         maxDistance: this.options.searchRadius,
         count: 400,
       });

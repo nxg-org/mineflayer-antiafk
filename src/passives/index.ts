@@ -23,8 +23,8 @@ export const PASSIVE_DEFAULT_SETTINGS: AllPassiveSettings = {
         enabled: true,
         multi: false,
         reach: 3,
-        entityBlacklist: new Set([]),
-        playerWhitelist: new Set([])
+        entityBlacklist: [],
+        playerWhitelist: []
     },
 }
 

@@ -8,8 +8,8 @@ export interface IWalkAroundModuleOptions extends AFKModuleOptions {
    newChunks: boolean 
    rotateChunks: boolean
   //  stayNearOrigin: boolean = false,
-   preferBlockIds: Set<number> 
-   avoidBlockIds: Set<number> 
+   preferBlockIds: number[] 
+   avoidBlockIds: number[] 
    timeout: number
    searchRadius: number 
 }
@@ -20,8 +20,8 @@ export class WalkAroundModuleOptions implements IWalkAroundModuleOptions {
     public newChunks: boolean = false,
     public rotateChunks: boolean = false,
     // public stayNearOrigin: boolean = false,
-    public preferBlockIds: Set<number> = new Set(),
-    public avoidBlockIds: Set<number> = new Set(),
+    public preferBlockIds: number[] = [],
+    public avoidBlockIds: number[] = [],
     public timeout: number = 10000,
     public searchRadius: number = 16
   ) {}
@@ -32,8 +32,8 @@ export class WalkAroundModuleOptions implements IWalkAroundModuleOptions {
       false,
       false,
       // false,
-      new Set([bot.registry.blocksByName.grass.id, bot.registry.blocksByName.cobblestone.id]),
-      new Set([bot.registry.blocksByName.water.id, bot.registry.blocksByName.lava.id, bot.registry.blocksByName.air.id])
+      [bot.registry.blocksByName.grass.id, bot.registry.blocksByName.cobblestone.id],
+      [bot.registry.blocksByName.water.id, bot.registry.blocksByName.lava.id, bot.registry.blocksByName.air.id]
     );
   }
   public static TwoBTwoT(bot: Bot) {
@@ -42,12 +42,12 @@ export class WalkAroundModuleOptions implements IWalkAroundModuleOptions {
       true,
       true,
       // true,
-      new Set([
+      [
         bot.registry.blocksByName.grass.id,
         bot.registry.blocksByName.cobblestone.id,
         bot.registry.blocksByName.obsidian.id,
-      ]),
-      new Set([bot.registry.blocksByName.water.id, bot.registry.blocksByName.lava.id, bot.registry.blocksByName.air.id])
+      ],
+      [bot.registry.blocksByName.water.id, bot.registry.blocksByName.lava.id, bot.registry.blocksByName.air.id]
     );
   }
 }
@@ -102,7 +102,7 @@ export class WalkAroundModule extends AFKModule<IWalkAroundModuleOptions> {
 
       list = this.bot
         .findBlocks({
-          matching: (b) => this.options.preferBlockIds.has(b.type),
+          matching: (b) => this.options.preferBlockIds.includes(b.type),
           maxDistance: this.options.searchRadius,
           count: 400,
           point,
@@ -112,7 +112,7 @@ export class WalkAroundModule extends AFKModule<IWalkAroundModuleOptions> {
       if (list.length === 0) {
         list = this.bot
           .findBlocks({
-            matching: (b) => !this.options.avoidBlockIds.has(b.type),
+            matching: (b) => !this.options.avoidBlockIds.includes(b.type),
             maxDistance: this.options.searchRadius,
             count: 1600,
             point,

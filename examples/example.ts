@@ -4,10 +4,10 @@ import antiafk, {
   AFKModuleOptions,
   AFKPassive,
   AFKPassiveOptions,
-} from "./index";
+} from "../src/index";
 
 import { promisify } from "util";
-import { KillAuraPassive } from "./passives/killaura";
+import { KillAuraPassive } from "../src/passives/killaura";
 const sleep = promisify(setTimeout);
 
 const bot = createBot({
@@ -124,7 +124,7 @@ bot.once("spawn", async () => {
     enabled: true,
     multi: false,
     reach: 3,
-    playerWhitelist: new Set(["Generel_Schwerz"])
+    playerWhitelist: ["Generel_Schwerz"]
   })
 
   // dynamically remove modules.

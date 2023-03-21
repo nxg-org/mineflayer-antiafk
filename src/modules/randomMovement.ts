@@ -5,17 +5,17 @@ import { AFKModule, AFKModuleOptions } from "./module";
 export class RandomMovementModule extends AFKModule<AFKModuleOptions> {
 
     private static readonly controlStates: ControlState[] = ["jump", "sprint", "sneak", "left", "right", "forward", "back"]
-    private readonly liquidBlocks: Set<number>;
+    private readonly liquidBlocks: number[];
 
     public constructor(bot: Bot, options: Partial<AFKModuleOptions> = {}) {
         super(bot, options)
 
         this.liquidBlocks = !!bot["pathfinder"]?.movements
-        ? bot["pathfinder"]?.movements.liquids
-        : new Set([
+        ? Array.from(bot["pathfinder"]?.movements.liquids)
+        : [
             bot.registry.blocksByName.water.id,
             bot.registry.blocksByName.lava.id,
-          ]);
+          ];
     }
 
 
@@ -35,7 +35,7 @@ export class RandomMovementModule extends AFKModule<AFKModuleOptions> {
         let currentStates: [ControlState, boolean][] = RandomMovementModule.controlStates.map(name => [name, Math.random() > 0.5])
         currentStates.map(([name, val]) => this.bot.setControlState(name, val))
 
-        if (this.liquidBlocks.has(this.bot.blockAt(this.bot.entity.position)?.type ?? -1)) {
+        if (this.liquidBlocks.includes(this.bot.blockAt(this.bot.entity.position)?.type ?? -1)) {
             this.bot.setControlState("jump", true);
         }
         
