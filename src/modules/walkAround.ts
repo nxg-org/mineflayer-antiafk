@@ -3,8 +3,6 @@ import { goals, Movements, Pathfinder } from "mineflayer-pathfinder";
 import { Vec3 } from "vec3";
 import { customMerge } from "../utils";
 import { AFKModule, AFKModuleOptions } from "./module";
-import registry from "prismarine-registry";
-
 
 export interface IWalkAroundModuleOptions extends AFKModuleOptions {
    newChunks: boolean 
