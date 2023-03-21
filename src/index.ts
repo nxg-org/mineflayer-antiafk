@@ -32,15 +32,10 @@ export function unloadDefaultPassives(bot: Bot) {
 }
 
 
-import { ChatBotModuleOptions, IBlockBreakModuleOptions, IWalkAroundModuleOptions } from "./modules";
-export type AllModuleSettings = {
-    WalkAroundModule: IWalkAroundModuleOptions,
-    ChatBotModule: ChatBotModuleOptions,
-    BlockBreakModule: IBlockBreakModuleOptions,
-    LookAroundModule: {enabled: boolean}
-    RandomMovementModule: {enabled: boolean},
-};
 
-export {AFKModule, AFKModuleOptions, DEFAULT_MODULES, MODULE_DEFAULT_SETTINGS} from "./modules";
-export {AFKPassive, AFKPassiveOptions, DEFAULT_PASSIVES, PASSIVE_DEFAULT_SETTINGS} from "./passives"
+
+
+
+export {AFKModule, AFKModuleOptions, DEFAULT_MODULES, MODULE_DEFAULT_SETTINGS, AllModuleSettings} from "./modules";
+export {AFKPassive, AFKPassiveOptions, DEFAULT_PASSIVES, PASSIVE_DEFAULT_SETTINGS, AllPassiveSettings} from "./passives"
 

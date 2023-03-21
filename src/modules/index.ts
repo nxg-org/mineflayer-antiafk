@@ -1,38 +1,40 @@
 import { Bot } from "mineflayer";
-import { ChatBotModule } from "./chatBot";
-import { BlockBreakModule } from "./blockBreak";
+import { ChatBotModule, ChatBotModuleOptions } from "./chatBot";
+import { BlockBreakModule, IBlockBreakModuleOptions } from "./blockBreak";
 import { LookAroundModule } from "./lookAround";
 import { AFKModule, AFKModuleOptions } from "./module";
 import { RandomMovementModule } from "./randomMovement";
-import { WalkAroundModule } from "./walkAround";
+import { IWalkAroundModuleOptions, WalkAroundModule } from "./walkAround";
 import { AFKConstructor } from "../utils";
 
 export type AntiAFKModuleOptions = { [key: string]: AFKModuleOptions };
 
 /**
  * TODO: Fix typing so it matches when called externally (this is a library).
- * Currently, defaults to no mineflayer-pathfinder since local resolution of 
+ * Currently, defaults to no mineflayer-pathfinder since local resolution of
  * "minecraft-pathfinder" fails.
  */
-export const DEFAULT_MODULES = require.resolve("mineflayer-pathfinder") ? {
-  "LookAroundModule": LookAroundModule,
-  "RandomMovementModule": RandomMovementModule,
-  "WalkAroundModule": WalkAroundModule,
-  "ChatBotModule": ChatBotModule,
-  "BlockBreakModule": BlockBreakModule
-} as const : {
-  "LookAroundModule": LookAroundModule,
-  "RandomMovementModule": RandomMovementModule,
-  "ChatBotModule": ChatBotModule,
-} as const
+export const DEFAULT_MODULES = require.resolve("mineflayer-pathfinder")
+  ? ({
+      LookAroundModule: LookAroundModule,
+      RandomMovementModule: RandomMovementModule,
+      WalkAroundModule: WalkAroundModule,
+      ChatBotModule: ChatBotModule,
+      BlockBreakModule: BlockBreakModule,
+    } as const)
+  : ({
+      LookAroundModule: LookAroundModule,
+      RandomMovementModule: RandomMovementModule,
+      ChatBotModule: ChatBotModule,
+    } as const);
 
 /**
  * TODO: Fix typing so it matches when called externally (this is a library).
- * Currently, defaults to no mineflayer-pathfinder since local resolution of 
+ * Currently, defaults to no mineflayer-pathfinder since local resolution of
  * "minecraft-pathfinder" fails.
  */
-export const MODULE_DEFAULT_SETTINGS = require.resolve("mineflayer-pathfinder")
-  ? (bot: Bot) => {
+export const MODULE_DEFAULT_SETTINGS: (bot: Bot) => Partial<AllModuleSettings> = require.resolve("mineflayer-pathfinder")
+  ? (bot) => {
       return {
         WalkAroundModule: {
           enabled: true,
@@ -69,7 +71,7 @@ export const MODULE_DEFAULT_SETTINGS = require.resolve("mineflayer-pathfinder")
         },
       };
     }
-  : (bot: Bot) => {
+  : (_bot) => {
       return {
         ChatBotModule: {
           enabled: true,
@@ -86,6 +88,14 @@ export const MODULE_DEFAULT_SETTINGS = require.resolve("mineflayer-pathfinder")
         },
       };
     };
+
+export type AllModuleSettings = {
+  WalkAroundModule: IWalkAroundModuleOptions;
+  ChatBotModule: ChatBotModuleOptions;
+  BlockBreakModule: IBlockBreakModuleOptions;
+  LookAroundModule: { enabled: boolean };
+  RandomMovementModule: { enabled: boolean };
+};
 
 export * from "./chatBot";
 export * from "./blockBreak";
