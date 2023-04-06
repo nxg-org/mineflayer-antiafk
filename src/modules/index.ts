@@ -45,7 +45,7 @@ export const MODULE_DEFAULT_SETTINGS: (bot: Bot) => Partial<AllModuleSettings> =
         ChatBotModule: {
           enabled: true,
           random: false,
-          messages: ["NextGEN Anti-afk Module"],
+          messages: ["Powered by NextGEN: Mineflayer-AntiAFK!"],
           delay: 3000,
           variation: 300,
         },
