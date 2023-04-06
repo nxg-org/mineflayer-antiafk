@@ -45,7 +45,7 @@ export const MODULE_DEFAULT_SETTINGS: (bot: Bot) => Partial<AllModuleSettings> =
         ChatBotModule: {
           enabled: true,
           random: false,
-          messages: ["NextGEN Anti-afk Module", "test", "test1", "test2"],
+          messages: ["NextGEN Anti-afk Module"],
           delay: 3000,
           variation: 300,
         },
