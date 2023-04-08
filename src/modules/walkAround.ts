@@ -23,8 +23,8 @@ export class WalkAroundModuleOptions implements IWalkAroundModuleOptions {
     // public stayNearOrigin: boolean = false,
     public preferBlockIds: number[] = [],
     public avoidBlockIds: number[] = [],
+    public searchRadius: number = 16,
     public timeout: number = 10000,
-    public searchRadius: number = 16
   ) {}
 
   public static standard(bot: Bot) {
@@ -143,6 +143,34 @@ export class WalkAroundModule extends AFKModule<IWalkAroundModuleOptions> {
     return null;
   }
 
+
+  /**
+   * Forceful override for position changes.
+   * This will detect whether or not pathfinder is stuck.
+   */
+  private noXZMovementWatcher() {
+    let lastRunTime = performance.now();
+    const currentPos = this.bot.entity.position.clone();
+    const listener = (pos: Vec3) => {
+      if (!this.isActive) this.bot.off("move", listener);
+      if (currentPos.x === pos.x && currentPos.z === pos.z) {
+        if (performance.now() - lastRunTime > this.options.timeout) {
+          this.bot.off("move", listener);
+          console.log(this.isActive, "cancelling")
+          // rough patch, but it's fine for now.
+          // only trigger cancel event if this is still running, otherwise quietly quit.
+          if (this.isActive) this.cancel();
+        }
+      } else {
+        lastRunTime = performance.now();
+        currentPos.set(pos.x, pos.y, pos.z);
+      }
+    };
+
+    this.bot.on("move", listener);
+  }
+
+
   public override async perform(): Promise<boolean> {
     super.perform();
     let bl = this.findLocation();
@@ -151,38 +179,27 @@ export class WalkAroundModule extends AFKModule<IWalkAroundModuleOptions> {
       return false;
     }
 
-    let lastMoveTime = performance.now();
-    const lastPos = this.bot.entity.position.clone();
-    const listener = (newPos: Vec3) => {
-      if (lastPos.equals(newPos)) {
-        if (performance.now() - lastMoveTime > this.options.timeout) {
-          this.bot.pathfinder.stop();
-          this.bot.off('move', listener)
-        }
-      } else {
-        lastPos.set(newPos.x, newPos.y, newPos.z)
-        lastMoveTime = performance.now();
-      }
-    }
-    this.bot.on('move', listener)
+    this.noXZMovementWatcher();
 
+    this.lastLocation = bl
+    let complete = false;
+    let message;
     try {
       await this.bot.pathfinder.goto(new goals.GoalGetToBlock(bl.x, bl.y, bl.z));
       this.lastLocation = this.bot.entity.position.offset(0, -1, 0).floored();
-      this.bot.off('move', listener)
-      this.complete(true);
-      return true;
+      complete = true;
     } catch (e: any) {
-      // just going to end.
-      this.bot.off('move', listener)
-      this.complete(false, "failed to traverse to goal. " + String(e));
-      return false;
+      message = "failed to traverse to goal. " + String(e);
+    }
+
+    finally {
+      this.complete(complete, message);
+      return complete;
     }
   }
 
   public override async cancel(): Promise<boolean> {
     this.bot.pathfinder.stop();
-    this.bot.pathfinder.setGoal(null);
     return super.cancel();
   }
 }

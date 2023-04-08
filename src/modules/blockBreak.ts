@@ -9,7 +9,7 @@ export interface IBlockBreakModuleOptions extends AFKModuleOptions {
   preferBlockIds: number[];
   avoidBlockIds: number[];
   searchRadius: number;
-  timeout: number
+  timeout: number;
 }
 
 export class BlockBreakModuleOptions implements IBlockBreakModuleOptions {
@@ -17,21 +17,15 @@ export class BlockBreakModuleOptions implements IBlockBreakModuleOptions {
     public enabled: boolean = false,
     public preferBlockIds: number[] = [],
     public avoidBlockIds: number[] = [],
+    public searchRadius: number = 16,
     public timeout: number = 10000,
-    public searchRadius: number = 16
   ) {}
 
   public static standard(bot: Bot, maxGoodHardness: number = 0.5, minAvoidHardness: number = 1.4) {
     return new BlockBreakModuleOptions(
       false,
-      bot.registry.blocksArray
-        .filter((b) => b.hardness && b.hardness <= maxGoodHardness)
-        .map((b) => b.id),
-
-      bot.registry.blocksArray
-        .filter((b) => b.hardness && b.hardness >= minAvoidHardness)
-        .map((b) => b.id),
-      16
+      bot.registry.blocksArray.filter((b) => b.hardness && b.hardness <= maxGoodHardness).map((b) => b.id),
+      bot.registry.blocksArray.filter((b) => b.hardness && b.hardness >= minAvoidHardness).map((b) => b.id)
     );
   }
 }
@@ -74,14 +68,14 @@ export class BlockBreakModule extends AFKModule<IBlockBreakModuleOptions> {
 
   private findBlock(): Block | null {
     let list = this.bot.findBlocks({
-      matching: (b) => this.options.preferBlockIds.includes(b.type),
+      matching: (b) => this.options.preferBlockIds.includes(b.type) && b.boundingBox === "block",
       maxDistance: this.options.searchRadius,
       count: 400,
     });
 
     if (!this.checkBlockList(list)) {
       list = this.bot.findBlocks({
-        matching: (b) => !this.options.avoidBlockIds.includes(b.type),
+        matching: (b) => !this.options.avoidBlockIds.includes(b.type) && b.boundingBox === "block",
         maxDistance: this.options.searchRadius,
         count: 400,
       });
@@ -99,6 +93,28 @@ export class BlockBreakModule extends AFKModule<IBlockBreakModuleOptions> {
     }
   }
 
+  private noXZMovementWatcher() {
+    let lastRunTime = performance.now();
+    const currentPos = this.bot.entity.position.clone();
+    const listener = (pos: Vec3) => {
+      if (!this.isActive) this.bot.off("move", listener);
+      if (currentPos.x === pos.x && currentPos.z === pos.z) {
+        if (performance.now() - lastRunTime > this.options.timeout) {
+          this.bot.off("move", listener);
+
+          // rough patch, but it's fine for now.
+          // only trigger cancel event if this is still running, otherwise quietly quit.
+          if (this.isActive) this.cancel();
+        }
+      } else {
+        lastRunTime = performance.now();
+        currentPos.set(pos.x, pos.y, pos.z);
+      }
+    };
+
+    this.bot.on("move", listener);
+  }
+
   public override async perform(): Promise<boolean> {
     super.perform();
     let bl = this.findBlock();
@@ -107,61 +123,29 @@ export class BlockBreakModule extends AFKModule<IBlockBreakModuleOptions> {
       return false;
     }
 
-
-    let lastMoveTime = performance.now();
-    const lastPos = this.bot.entity.position.clone();
-    const listener = (newPos: Vec3) => {
-      if (lastPos.equals(newPos)) {
-        if (performance.now() - lastMoveTime > this.options.timeout) {
-          this.bot.pathfinder.stop();
-          this.bot.off('move', listener)
-        }
-      } else {
-        lastPos.set(newPos.x, newPos.y, newPos.z)
-        lastMoveTime = performance.now();
-      }
-    }
-    this.bot.on('move', listener)
-
+    this.noXZMovementWatcher();
 
     this.lastLocation = bl.position;
+    let complete = false;
+    let message;
     try {
-      await this.bot.pathfinder.goto(new goals.GoalLookAtBlock(bl.position, this.bot.world));
-
-      // note: this is to make the bot stop sinking when digging.
-      let pleaseStayAfloat = false;
-      if (
-        this.bot.pathfinder.movements.liquids.has(this.bot.blockAt(this.bot.entity.position)?.type ?? -1) &&
-        this.bot.pathfinder.movements.liquids.has(
-          this.bot.blockAt(this.bot.entity.position.offset(0, -1, 0))?.type ?? -1
-        )
-      ) {
-        pleaseStayAfloat = true;
-        this.bot.setControlState("jump", true);
-      }
-
-      // Note: this may error.
-      // I cannot catch this error as it is internal.
-      // So basically, this may crash. :thumbsup:
-      await this.bot.dig(bl, true, "raycast");
-
-      if (pleaseStayAfloat) {
-        this.bot.setControlState("jump", false);
-      }
-
-      this.bot.off('move', listener)
-      this.complete(true);
-      return true;
+      const goal = new goals.GoalGetToBlock(bl.position.x, bl.position.y, bl.position.z);
+      await this.bot.pathfinder.goto(goal);
+      await this.bot.lookAt(bl.position);
+      const bl1 = this.bot.blockAtCursor();
+      if (bl1) await this.bot.dig(bl1, true, "raycast");
+      else throw Error("Did not find block when raycasting!");
+      complete = true;
     } catch (e: any) {
-      // just going to end.
-      this.bot.off('move', listener)
-      this.complete(false, "failed to pathfind to block. " + String(e));
-      return false;
+      message = String(e);
+    } finally {
+      this.complete(complete, message);
+      return complete;
     }
   }
+
   public override async cancel(): Promise<boolean> {
     this.bot.pathfinder.stop();
-    this.bot.pathfinder.setGoal(null);
     this.bot.stopDigging();
     return super.cancel();
   }

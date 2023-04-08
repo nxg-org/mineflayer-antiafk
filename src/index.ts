@@ -6,8 +6,6 @@ import { AntiAFK } from "./antiafk";
 import { DEFAULT_MODULES } from "./modules";
 import { DEFAULT_PASSIVES } from "./passives";
 
-
-
 declare module "mineflayer" {
     interface Bot {
         antiafk: AntiAFK;

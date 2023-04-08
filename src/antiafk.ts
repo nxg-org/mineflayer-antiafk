@@ -18,7 +18,7 @@ type AntiAFKEmitter = StrictEventEmitter<EventEmitter, AntiAFKEvents>;
 type ModuleSelector = (cls: AntiAFK) => AFKModule<AFKModuleOptions>;
 
 function getLessRandomModule(cls: AntiAFK): AFKModule<AFKModuleOptions> | null {
-  let goodMods = cls.modules.filter((m) => !m.isActive && cls.isModuleEnabled(m) && cls.lastFailed !== m);
+  let goodMods = cls.modules.filter((m) => !m.isActive && cls.isModuleEnabled(m));
   const notLastModule = goodMods.filter((m) => m != cls.lastModule);
   goodMods = notLastModule.length > 0 ? notLastModule : goodMods;
   return goodMods[Math.floor(goodMods.length * Math.random())] ?? null;
@@ -32,7 +32,7 @@ function getLessRandomModule(cls: AntiAFK): AFKModule<AFKModuleOptions> | null {
  */
 export class AntiAFK extends (EventEmitter as { new (): AntiAFKEmitter }) {
   public modules: AFKModule<AFKModuleOptions>[];
-  public passives: AFKPassive<AFKPassiveOptions>[];
+  public passives: AFKPassive<AFKPassiveOptions, any>[];
   public moduleOptions!: AntiAFKModuleOptions;
   public passiveOptions!: AntiAFKPassiveOptions;
   private _lastModule: AFKModule<AFKModuleOptions> | null;
@@ -111,7 +111,7 @@ export class AntiAFK extends (EventEmitter as { new (): AntiAFKEmitter }) {
     }
   }
 
-  public setOptionsForPassive<T extends AFKPassive<AFKPassiveOptions>>(
+  public setOptionsForPassive<T extends AFKPassive<AFKPassiveOptions, any>>(
     passive: AFKConstructor<T>,
     settings: Partial<T["options"]>
   ) {
@@ -139,7 +139,7 @@ export class AntiAFK extends (EventEmitter as { new (): AntiAFKEmitter }) {
     this.modules = this.modules.filter((m) => !toRemoveNames.includes(m.constructor.name));
   }
 
-  public addPassives(...passives: AFKConstructor<AFKPassive<AFKPassiveOptions>>[]) {
+  public addPassives(...passives: AFKConstructor<AFKPassive<AFKPassiveOptions, any>>[]) {
     let currentNames = this.passives.map((m) => m.constructor.name);
     let toMake = passives.filter((m) => !currentNames.includes(m.name));
     let toMakeNames = toMake.map((m) => m.name);
@@ -150,7 +150,7 @@ export class AntiAFK extends (EventEmitter as { new (): AntiAFKEmitter }) {
     this.passives = this.passives.concat(toMake.map((m) => new m(this.bot, this.passiveOptions[m.name])));
   }
 
-  public removePassives(...passives: AFKConstructor<AFKPassive<AFKPassiveOptions>>[]) {
+  public removePassives(...passives: AFKConstructor<AFKPassive<AFKPassiveOptions, any>>[]) {
     let toRemoveNames = passives.map((m) => m.constructor.name);
     this.passives.filter((m) => toRemoveNames.includes(m.constructor.name)).map((m) => m.stop());
     toRemoveNames.map((nme) => (this.passiveOptions[nme] ??= { enabled: false }));

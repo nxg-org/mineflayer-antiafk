@@ -1,6 +1,6 @@
 {
     "name": "@nxg-org/mineflayer-antiafk",
-    "version": "1.4.16",
+    "version": "1.4.17",
     "description": "Automatic movement for minecraft afk usage.",
     "keywords": [
         "mineflayer",
@@ -22,7 +22,7 @@
     "types": "lib/index.d.ts",
     "scripts": {
         "build": "npx tsc",
-        "test": "node --trace-warnings lib/example.js",
+        "test": "ts-node examples/example.ts",
         "prepublish": "npm run build"
     },
     "dependencies": {

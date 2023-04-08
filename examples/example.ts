@@ -8,6 +8,7 @@ import antiafk, {
 
 import { promisify } from "util";
 import { KillAuraPassive } from "../src/passives/killaura";
+import { pathfinder } from "mineflayer-pathfinder";
 const sleep = promisify(setTimeout);
 
 const bot = createBot({
@@ -17,6 +18,7 @@ const bot = createBot({
   hideErrors: false,
 });
 
+bot.loadPlugin(pathfinder)
 bot.loadPlugin(antiafk);
 
 // Example of a custom AFK module setting.
@@ -44,13 +46,22 @@ class TestModule extends AFKModule<TestModuleOptions> {
   }
 }
 
-// Example passive for AFK.
-// print block name and location "every" time we break a block (mineflayer bad)
-class TestPassive extends AFKPassive<AFKPassiveOptions> {
+import type {Block} from 'prismarine-block'
+
+// class TestPassive extends AFKPassive<AFKPassiveOptions, 'blockUpdate'> {
+ 
+//   protected eventWanted = "blockUpdate" as const;
+
+//   public listener = (oldBlock: Block | null, newBlock: Block) => {
+    
+//   }
+ 
+// }
+
+class TestPassive1 extends AFKPassive<AFKPassiveOptions, 'diggingCompleted'> {
   protected eventWanted = "diggingCompleted" as const;
 
-  // sadly, this is still WIP.
-  public listener: BotEvents[TestPassive["eventWanted"]] = (block) => {
+  public listener = (block: Block) => {
     console.log([block.name, block.position])
   };
 }
@@ -59,10 +70,11 @@ class TestPassive extends AFKPassive<AFKPassiveOptions> {
 bot.once("spawn", async () => {
   // insert generic type of module wanted.
   // instantiation is handled internally.
-  bot.antiafk.addModules(TestModule);
-  bot.antiafk.addPassives(TestPassive);
+  // bot.antiafk.addModules(TestModule);
+  bot.antiafk.addPassives(TestPassive1);
 
-  bot.antiafk.on('moduleStarted', (module) => console.log(module.constructor.name))
+  bot.antiafk.on('moduleCompleted', (mod, suc, res) => console.log('complete', mod.constructor.name, suc, res))
+  bot.antiafk.on('moduleStarted', (module) => console.log('start', module.constructor.name))
 
 
   // Weak type coercion. 
@@ -89,7 +101,7 @@ bot.once("spawn", async () => {
       searchRadius: 8,
     },
     ChatBotModule: {
-      enabled: true,
+      enabled: false,
       random: false,
       messages: ["NextGEN Anti-afk Module", "test", "test1", "test2"],
       delay: 2000,
@@ -99,14 +111,14 @@ bot.once("spawn", async () => {
       enabled: true,
     },
     RandomMovementModule: {
-      enabled: true,
+      enabled: false,
     },
     BlockBreakModule: {
       enabled: true,
       // locate all easily broken blocks via this method.
-      preferBlockIds: new Set(Object.values(bot.registry.blocks)
-        .filter((b) => b.hardness && b.hardness <= 0.5)
-        .map((b) => b.id)),
+      preferBlockIds: bot.registry.blocksArray
+        .filter((b) => b.hardness && b.hardness <= 0.5 && b.boundingBox === 'block')
+        .map((b) => b.id),
     },
   });
 
@@ -130,6 +142,10 @@ bot.once("spawn", async () => {
   // dynamically remove modules.
   // module settings are persistent across removal.
   // bot.antiafk.removeModules(TestModule);
+
+  bot.antiafk.start()
+
+ 
 });
 
 bot.on("chat", async (username, message) => {

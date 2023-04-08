@@ -11,8 +11,8 @@ export interface AFKPassiveOptions {
   [other: string]: any;
 }
 
-export abstract class AFKPassive<T extends AFKPassiveOptions> {
-  protected eventWanted: keyof BotEvents = "physicsTick";
+export abstract class AFKPassive<T extends AFKPassiveOptions, Event extends keyof BotEvents> {
+  protected abstract eventWanted: Event;
   protected isActive: boolean = false;
   public options: T;
 
@@ -24,7 +24,7 @@ export abstract class AFKPassive<T extends AFKPassiveOptions> {
    * TODO: Make listener's parameter match the BotEvents[eventWanted] function's parameters.
    * Probably not doable.
    */
-  public abstract listener: BotEvents[AFKPassive<T>["eventWanted"]];
+  public abstract listener: BotEvents[Event];
 
   public begin() {
     if (this.isActive) return;

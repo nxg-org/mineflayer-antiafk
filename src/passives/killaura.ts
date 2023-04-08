@@ -19,7 +19,7 @@ export class KillAuraPassiveOptions implements AFKPassiveOptions {
     public playerWhitelist: string[]
   ) {}
 
-  public static vanilla_default(bot: Bot, players: string[] = []) {
+  public static vanillaDefault(bot: Bot, players: string[] = []) {
     const entityBlacklist = [
       bot.registry.entitiesByName.enderman.id,
       bot.registry.entitiesByName.zombie_pigman.id,
@@ -34,11 +34,13 @@ export class KillAuraPassiveOptions implements AFKPassiveOptions {
   }
 }
 
-export class KillAuraPassive extends AFKPassive<IKillAuraPassiveOptions> {
+export class KillAuraPassive extends AFKPassive<IKillAuraPassiveOptions, 'physicsTick'> {
   public static readonly hittableTypes = new Set(["mob", "player"]);
 
+  protected eventWanted = "physicsTick" as const;
+
   public constructor(bot: Bot, options: Partial<IKillAuraPassiveOptions> = {}) {
-    super(bot, customMerge(KillAuraPassiveOptions.vanilla_default(bot), options));
+    super(bot, customMerge(KillAuraPassiveOptions.vanillaDefault(bot), options));
   }
 
   public listener = () => {

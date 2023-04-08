@@ -27,7 +27,7 @@ export abstract class AFKModule<T extends AFKModuleOptions> {
     public options: T
 
 
-    public constructor(protected bot: Bot,  options: Partial<T> = {}) {
+    public constructor(protected readonly bot: Bot, options: Partial<T> = {}) {
         this.isActive = false;
         this.options = customMerge({enabled: false}, options)
     }
@@ -53,7 +53,8 @@ export abstract class AFKModule<T extends AFKModuleOptions> {
         this.bot.antiafk.emit("moduleCanceled", this)
         return true;
     }
-    
+
+
     /**
      * Set options of current module.
      * @param {Partial<AFKModuleOptions> options Options for module.
