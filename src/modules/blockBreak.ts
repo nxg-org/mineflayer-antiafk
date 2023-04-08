@@ -9,13 +9,15 @@ export interface IBlockBreakModuleOptions extends AFKModuleOptions {
   preferBlockIds: number[];
   avoidBlockIds: number[];
   searchRadius: number;
+  timeout: number
 }
 
-export class BlockBreakModuleOptions implements AFKModuleOptions {
+export class BlockBreakModuleOptions implements IBlockBreakModuleOptions {
   constructor(
     public enabled: boolean = false,
     public preferBlockIds: number[] = [],
     public avoidBlockIds: number[] = [],
+    public timeout: number = 10000,
     public searchRadius: number = 16
   ) {}
 
