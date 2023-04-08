@@ -175,7 +175,7 @@ export class WalkAroundModule extends AFKModule<IWalkAroundModuleOptions> {
     } catch (e: any) {
       // just going to end.
       this.bot.off('move', listener)
-      this.complete(false, "failed to traverse to goal.");
+      this.complete(false, "failed to traverse to goal. " + String(e));
       return false;
     }
   }

@@ -155,7 +155,7 @@ export class BlockBreakModule extends AFKModule<IBlockBreakModuleOptions> {
     } catch (e: any) {
       // just going to end.
       this.bot.off('move', listener)
-      this.complete(false, "failed to pathfind to block.");
+      this.complete(false, "failed to pathfind to block. " + String(e));
       return false;
     }
   }
