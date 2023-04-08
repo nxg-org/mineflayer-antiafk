@@ -1,6 +1,6 @@
 {
     "name": "@nxg-org/mineflayer-antiafk",
-    "version": "1.4.13",
+    "version": "1.4.14",
     "description": "Automatic movement for minecraft afk usage.",
     "keywords": [
         "mineflayer",
