@@ -1,18 +1,19 @@
 
-import { Bot } from "mineflayer";
+import type { Bot } from "mineflayer";
 import utilPlugin from "@nxg-org/mineflayer-util-plugin";
 import { AntiAFK } from "./antiafk";
-import {IndexedData} from "minecraft-data"
 
-import { AFKModuleOptions, DEFAULT_MODULES } from "./modules";
+import { DEFAULT_MODULES } from "./modules";
 import { DEFAULT_PASSIVES } from "./passives";
+
+
 
 declare module "mineflayer" {
     interface Bot {
         antiafk: AntiAFK;
-        registry: IndexedData;
     }
 }
+
 
 export default function plugin(bot: Bot) {
     if (!bot.util) bot.loadPlugin(utilPlugin);
