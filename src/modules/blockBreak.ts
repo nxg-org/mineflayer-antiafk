@@ -105,6 +105,23 @@ export class BlockBreakModule extends AFKModule<IBlockBreakModuleOptions> {
       return false;
     }
 
+
+    let lastMoveTime = performance.now();
+    const lastPos = this.bot.entity.position.clone();
+    const listener = (newPos: Vec3) => {
+      if (lastPos.equals(newPos)) {
+        if (performance.now() - lastMoveTime > this.options.timeout) {
+          this.bot.pathfinder.stop();
+          this.bot.off('move', listener)
+        }
+      } else {
+        lastPos.set(newPos.x, newPos.y, newPos.z)
+        lastMoveTime = performance.now();
+      }
+    }
+    this.bot.on('move', listener)
+
+
     this.lastLocation = bl.position;
     try {
       await this.bot.pathfinder.goto(new goals.GoalLookAtBlock(bl.position, this.bot.world));
@@ -130,10 +147,12 @@ export class BlockBreakModule extends AFKModule<IBlockBreakModuleOptions> {
         this.bot.setControlState("jump", false);
       }
 
+      this.bot.off('move', listener)
       this.complete(true);
       return true;
     } catch (e: any) {
       // just going to end.
+      this.bot.off('move', listener)
       this.complete(false, "failed to pathfind to block.");
       return false;
     }

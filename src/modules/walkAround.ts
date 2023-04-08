@@ -152,7 +152,7 @@ export class WalkAroundModule extends AFKModule<IWalkAroundModuleOptions> {
     }
 
     let lastMoveTime = performance.now();
-    const lastPos = new Vec3(0, 0, 0);
+    const lastPos = this.bot.entity.position.clone();
     const listener = (newPos: Vec3) => {
       if (lastPos.equals(newPos)) {
         if (performance.now() - lastMoveTime > this.options.timeout) {
@@ -174,6 +174,7 @@ export class WalkAroundModule extends AFKModule<IWalkAroundModuleOptions> {
       return true;
     } catch (e: any) {
       // just going to end.
+      this.bot.off('move', listener)
       this.complete(false, "failed to traverse to goal.");
       return false;
     }
