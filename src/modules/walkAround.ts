@@ -1,8 +1,9 @@
 import { Bot } from "mineflayer";
-import { goals, Movements, Pathfinder } from "mineflayer-pathfinder";
+import { goals } from "mineflayer-pathfinder";
 import { Vec3 } from "vec3";
 import { customMerge } from "../utils";
 import { AFKModule, AFKModuleOptions } from "./module";
+import {performance} from 'perf_hooks'
 
 export interface IWalkAroundModuleOptions extends AFKModuleOptions {
    newChunks: boolean 
@@ -150,9 +151,25 @@ export class WalkAroundModule extends AFKModule<IWalkAroundModuleOptions> {
       return false;
     }
 
+    let lastMoveTime = performance.now();
+    const lastPos = new Vec3(0, 0, 0);
+    const listener = (newPos: Vec3) => {
+      if (lastPos.equals(newPos)) {
+        if (performance.now() - lastMoveTime > this.options.timeout) {
+          this.bot.pathfinder.stop();
+          this.bot.off('move', listener)
+        }
+      } else {
+        lastPos.set(newPos.x, newPos.y, newPos.z)
+        lastMoveTime = performance.now();
+      }
+    }
+    this.bot.on('move', listener)
+
     try {
       await this.bot.pathfinder.goto(new goals.GoalGetToBlock(bl.x, bl.y, bl.z));
       this.lastLocation = this.bot.entity.position.offset(0, -1, 0).floored();
+      this.bot.off('move', listener)
       this.complete(true);
       return true;
     } catch (e: any) {
