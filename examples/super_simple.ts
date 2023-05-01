@@ -19,7 +19,7 @@ bot.once("spawn", () => {
     bot.antiafk.setOptionsForModule(BoxWalk, {
         enabled: true,
         distance: 16,
-        time: 10000,
+        travelTime: 10000,
     })
     bot.antiafk.setOptionsForModule(SwingArm, {enabled: true})
 

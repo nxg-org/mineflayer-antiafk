@@ -5,11 +5,12 @@ import { sleep } from "../utils";
 
 export type IBoxWalk = AFKModuleOptions & {
   distance?: number;
-  time?: number;
+  travelTime?: number;
+  waitTime: number;
 };
 
 export class BoxWalkOpts implements IBoxWalk {
-  constructor(public enabled: boolean = false, public distance: number) {}
+  constructor(public enabled: boolean = false, public distance: number, public waitTime: number = 0) {}
 
   public static standard() {
     return new BoxWalkOpts(true, 16);
@@ -24,31 +25,26 @@ export class BoxWalkOpts implements IBoxWalk {
  * but that requires me to acknowledge when the module is actually started.
  */
 export class BoxWalk extends AFKModule<IBoxWalk> {
-
-
   public override async perform(): Promise<boolean> {
-    super.perform()
-    for (let i =0; i < 4; i ++) {
+    super.perform();
+    for (let i = 0; i < 4; i++) {
       await this.bot.look((Math.PI / 2) * i, 0, true);
       this.bot.clearControlStates();
-      this.bot.setControlState('forward', true);
+      this.bot.setControlState("forward", true);
 
       const sPos = this.bot.entity.position.clone();
       const sTime = performance.now();
 
       while (!this.shouldCancel) {
-        if (this.options.time) 
-          if (performance.now() - sTime > this.options.time) break;
-        if (this.options.distance) 
-          if (this.bot.entity.position.xzDistanceTo(sPos) > this.options.distance) break;
-        
+        if (this.options.travelTime) if (performance.now() - sTime > this.options.travelTime) break;
+        if (this.options.distance) if (this.bot.entity.position.xzDistanceTo(sPos) > this.options.distance) break;
+
         await sleep(50);
       }
       if (this.shouldCancel) break;
-     
-
+      await sleep(this.options.waitTime)
     }
-    if (this.shouldCancel) return this.complete(false, "Canceled!")
+    if (this.shouldCancel) return this.complete(false, "Canceled!");
     return this.complete(true);
   }
 
