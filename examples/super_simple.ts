@@ -1,5 +1,5 @@
 import antiafk, { unloadDefaultModules } from "../src/index";
-import { BlockWalk, SwingArm } from "../src/modules";
+import { BoxWalk, SwingArm } from "../src/modules";
 import { Bot, createBot } from "mineflayer";
 
 const bot = createBot({
@@ -14,9 +14,9 @@ bot.loadPlugin(antiafk);
 bot.once("spawn", () => {
 
     unloadDefaultModules(bot);
-    bot.antiafk.addModules(BlockWalk, SwingArm)
+    bot.antiafk.addModules(BoxWalk, SwingArm)
     
-    bot.antiafk.setOptionsForModule(BlockWalk, {
+    bot.antiafk.setOptionsForModule(BoxWalk, {
         enabled: true,
         distance: 16,
         time: 10000,

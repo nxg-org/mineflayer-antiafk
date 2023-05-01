@@ -6,7 +6,7 @@ import { AFKModuleOptions } from './module'
 import { RandomMovement } from './randomMovement'
 import { IPathfinderWalkOpts, PathfinderWalk, PathfinderWalkOpts } from './pathfinderWalk'
 import { ISimpleWalkOpts, SimpleWalk } from './simpleWalk'
-import { IBlockWalkOpts } from './boxWalk'
+import { IBoxWalk } from './boxWalk'
 
 export interface AntiAFKModuleOptions { [key: string]: AFKModuleOptions }
 
@@ -81,7 +81,7 @@ export const MODULE_DEFAULT_SETTINGS: (bot: Bot) => Partial<AllModuleSettings> =
 export interface AllModuleSettings {
   PathfinderWalk: IPathfinderWalkOpts
   SimpleWalk: ISimpleWalkOpts
-  BlockWalk: IBlockWalkOpts
+  BlockWalk: IBoxWalk
   ChatBot: ChatBotOpts
   BlockBreak: IBlockBreakOpts
   LookAround: { enabled: boolean }
