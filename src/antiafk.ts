@@ -95,8 +95,10 @@ export class AntiAFK extends (EventEmitter as new () => AntiAFKEmitter) {
     module: AFKConstructor<T>,
     settings: Partial<T['options']>
   ) {
+    const mod = this.modules.find((m) => m.constructor.name == module.name);
+    if (mod == null) throw new Error('No module loaded called: ' + module.name)
     this.moduleOptions[module.name] = customMerge(this.moduleOptions[module.name], settings)
-    this.modules.find((m) => m.constructor.name == module.name)?.setOptions(settings)
+    mod.setOptions(settings)
   }
 
   public setPassiveOptions (options: AntiAFKPassiveOptions, initial?: AntiAFKPassiveOptions) {
@@ -116,8 +118,10 @@ export class AntiAFK extends (EventEmitter as new () => AntiAFKEmitter) {
     passive: AFKConstructor<T>,
     settings: Partial<T['options']>
   ) {
+    const pass = this.passives.find((m) => m.constructor.name == passive.name)
+    if (pass == null) throw new Error('No passive loaded named: ' + passive.name)
     this.passiveOptions[passive.name] = customMerge(this.passiveOptions[passive.name], settings)
-    this.passives.find((m) => m.constructor.name == passive.name)?.setOptions(settings)
+    pass.setOptions(settings)
   }
 
   public addModules (...mods: Array<AFKConstructor<AFKModule<AFKModuleOptions>>>) {
