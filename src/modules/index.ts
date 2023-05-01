@@ -1,103 +1,99 @@
-import { Bot } from "mineflayer";
-import { ChatBotModule, ChatBotModuleOptions } from "./chatBot";
-import { BlockBreakModule, IBlockBreakModuleOptions } from "./blockBreak";
-import { LookAroundModule } from "./lookAround";
-import { AFKModule, AFKModuleOptions } from "./module";
-import { RandomMovementModule } from "./randomMovement";
-import { IWalkAroundModuleOptions, WalkAroundModule } from "./walkAround";
-import { AFKConstructor } from "../utils";
+import { Bot } from 'mineflayer'
+import { ChatBot, ChatBotOpts } from './chatBot'
+import { BlockBreak, BlockBreakOpts, IBlockBreakOpts } from './blockBreak'
+import { LookAround } from './lookAround'
+import { AFKModuleOptions } from './module'
+import { RandomMovement } from './randomMovement'
+import { IPathfinderWalkOpts, PathfinderWalk, PathfinderWalkOpts } from './pathfinderWalk'
+import { ISimpleWalkOpts, SimpleWalk } from './simpleWalk'
+import { IBlockWalkOpts } from './boxWalk'
 
-export type AntiAFKModuleOptions = { [key: string]: AFKModuleOptions };
+export interface AntiAFKModuleOptions { [key: string]: AFKModuleOptions }
 
 /**
  * TODO: Fix typing so it matches when called externally (this is a library).
  * Currently, defaults to no mineflayer-pathfinder since local resolution of
  * "minecraft-pathfinder" fails.
  */
-export const DEFAULT_MODULES = require.resolve("mineflayer-pathfinder")
+export const DEFAULT_MODULES = require.resolve('mineflayer-pathfinder')
   ? ({
-      LookAroundModule: LookAroundModule,
-      RandomMovementModule: RandomMovementModule,
-      WalkAroundModule: WalkAroundModule,
-      ChatBotModule: ChatBotModule,
-      BlockBreakModule: BlockBreakModule,
+      LookAround,
+      RandomMovement,
+      PathfinderWalk,
+      ChatBot,
+      BlockBreak
     } as const)
   : ({
-      LookAroundModule: LookAroundModule,
-      RandomMovementModule: RandomMovementModule,
-      ChatBotModule: ChatBotModule,
-    } as const);
+      LookAroundModule: LookAround,
+      RandomMovementModule: RandomMovement,
+      ChatBotModule: ChatBot
+    } as const)
 
 /**
  * TODO: Fix typing so it matches when called externally (this is a library).
  * Currently, defaults to no mineflayer-pathfinder since local resolution of
  * "minecraft-pathfinder" fails.
  */
-export const MODULE_DEFAULT_SETTINGS: (bot: Bot) => Partial<AllModuleSettings> = require.resolve("mineflayer-pathfinder")
+export const MODULE_DEFAULT_SETTINGS: (bot: Bot) => Partial<AllModuleSettings> = require.resolve('mineflayer-pathfinder')
   ? (bot) => {
       return {
-        WalkAroundModule: {
-          enabled: true,
-          newChunks: true,
-          rotateChunks: true,
-          searchRadius: 8,
-        },
-        ChatBotModule: {
+        PathfinderWalk: PathfinderWalkOpts.standard(bot),
+        ChatBot: {
           enabled: true,
           random: false,
-          messages: ["Powered by NextGEN: Mineflayer-AntiAFK!"],
-          delay: 3000,
-          variation: 300,
+          messages: ['Powered by NextGEN: Mineflayer-AntiAFK!'],
+          delay: 5000,
+          variation: 300
         },
-        LookAroundModule: {
-          enabled: true,
+        LookAround: {
+          enabled: true
         },
-        RandomMovementModule: {
-          enabled: true,
+        RandomMovement: {
+          enabled: true
         },
-        BlockBreakModule: {
-          enabled: true,
-          // locate all easily broken blocks via this method.
-          preferBlockIds: bot.registry.blocksArray
-              .filter((b) => b.hardness && b.hardness <= 0.5)
-              .map((b) => b.id)
-          ,
-          avoidBlockIds: bot.registry.blocksArray
-              .filter((b) => b.hardness && b.hardness >= 1.4)
-              .map((b) => b.id)
-          
-        },
-      };
+        BlockBreak: BlockBreakOpts.standard(bot, 0.5, 1.4)
+      }
     }
   : (_bot) => {
       return {
         ChatBotModule: {
           enabled: true,
           random: false,
-          messages: ["test", "test1", "test2"],
+          messages: ['test', 'test1', 'test2'],
           delay: 3000,
-          variation: 300,
+          variation: 300
         },
         LookAroundModule: {
-          enabled: true,
+          enabled: true
         },
         RandomMovementModule: {
-          enabled: true,
+          enabled: true
         },
-      };
-    };
+        SimpleWalk: {
+          enabled: true,
+          choices: ['forward', 'back', 'left', 'right'],
+          distance: 16,
+          randomChoices: false
+        }
+      }
+    }
 
-export type AllModuleSettings = {
-  WalkAroundModule: IWalkAroundModuleOptions;
-  ChatBotModule: ChatBotModuleOptions;
-  BlockBreakModule: IBlockBreakModuleOptions;
-  LookAroundModule: { enabled: boolean };
-  RandomMovementModule: { enabled: boolean };
-};
+export interface AllModuleSettings {
+  PathfinderWalk: IPathfinderWalkOpts
+  SimpleWalk: ISimpleWalkOpts
+  BlockWalk: IBlockWalkOpts
+  ChatBot: ChatBotOpts
+  BlockBreak: IBlockBreakOpts
+  LookAround: { enabled: boolean }
+  RandomMovement: { enabled: boolean }
+}
 
-export * from "./chatBot";
-export * from "./blockBreak";
-export * from "./lookAround";
-export * from "./randomMovement";
-export * from "./walkAround";
-export { AFKModule, AFKModuleOptions } from "./module";
+export * from './chatBot'
+export * from './blockBreak'
+export * from './lookAround'
+export * from './randomMovement'
+export * from './pathfinderWalk'
+export * from './simpleWalk'
+export * from './boxWalk'
+export * from './swingArm'
+export { AFKModule, AFKModuleOptions } from './module'

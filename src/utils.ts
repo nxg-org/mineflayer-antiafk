@@ -1,14 +1,18 @@
-import { Bot } from "mineflayer";
+import { Bot } from 'mineflayer'
 
-import { promisify } from "util";
-import { AFKModule, AFKModuleOptions } from "./modules";
+import { promisify } from 'util'
 
 export type AFKConstructor<T> = new (bot: Bot, ...any: any[]) => T
 
+export const sleep = promisify(setTimeout)
 
+export const randomElement = <T extends any>(list: readonly T[]): T => {
+  return list[randomInt(0, list.length - 1)]
+}
 
-export const sleep = promisify(setTimeout);
-
+export const randomInt = (min: number, max: number) => {
+  return Math.floor(Math.random() * (max - min + 1) + min)
+}
 
 /**
 * Performs a deep merge of objects and returns new object. Does not modify
@@ -17,30 +21,27 @@ export const sleep = promisify(setTimeout);
 * @param {...object} objects - Objects to merge
 * @returns {object} New object with merged key/values
 */
-export function customMerge(...objects: any[]) {
-    const isObject = (obj: any) => obj && typeof obj === 'object';
+export function customMerge (...objects: any[]) {
+  const isObject = (obj: any) => obj && typeof obj === 'object'
 
-    return objects.reduce((prev, obj) => {
-        Object.keys(obj).forEach(key => {
-            const pVal = prev[key];
-            const oVal = obj[key];
+  return objects.reduce((prev, obj) => {
+    Object.keys(obj).forEach(key => {
+      const pVal = prev[key]
+      const oVal = obj[key]
 
-            if (Array.isArray(pVal) && Array.isArray(oVal)) {
-                prev[key] = oVal//pVal.concat(...oVal);
-            }
-            else if (pVal instanceof Set && oVal instanceof Set) {
-                prev[key] = oVal;
-            }
-            else if (isObject(pVal) && isObject(oVal)) {
-                prev[key] = customMerge(pVal, oVal);
-            }
-            else {
-                prev[key] = oVal;
-            }
-        });
+      if (Array.isArray(pVal) && Array.isArray(oVal)) {
+        prev[key] = oVal// pVal.concat(...oVal);
+      } else if (pVal instanceof Set && oVal instanceof Set) {
+        prev[key] = oVal
+      } else if (isObject(pVal) && isObject(oVal)) {
+        prev[key] = customMerge(pVal, oVal)
+      } else {
+        prev[key] = oVal
+      }
+    })
 
-        return prev;
-    }, {});
+    return prev
+  }, {})
 }
 
 // /**
