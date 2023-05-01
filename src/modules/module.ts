@@ -4,7 +4,6 @@ import type { AntiAFK } from '../antiafk'
 
 export interface AFKModuleOptions {
   enabled: boolean
-  [other: string]: any
 }
 
 export abstract class AFKModule<T extends AFKModuleOptions = AFKModuleOptions> {

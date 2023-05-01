@@ -3,7 +3,7 @@ import { Bot } from 'mineflayer'
 import { AFKModule, AFKModuleOptions, DEFAULT_MODULES, MODULE_DEFAULT_SETTINGS, AntiAFKModuleOptions } from './modules'
 import { DEFAULT_PASSIVES, AntiAFKPassiveOptions, PASSIVE_DEFAULT_SETTINGS } from './passives'
 import { AFKPassive, AFKPassiveOptions } from './passives/passive'
-import { AFKConstructor, customMerge } from './utils'
+import { AFKConstructor, customMerge, sleep } from './utils'
 import StrictEventEmitter from 'strict-event-emitter-types'
 
 interface AntiAFKEvents {
@@ -50,6 +50,7 @@ export class AntiAFK extends (EventEmitter as new () => AntiAFKEmitter) {
 
   constructor (
     private readonly bot: Bot,
+    public transitionTime: number = 50,
     moduleOptions: AntiAFKModuleOptions = {},
     passiveOptions: AntiAFKPassiveOptions = {},
     moduleSelector?: ModuleSelector
@@ -188,6 +189,7 @@ export class AntiAFK extends (EventEmitter as new () => AntiAFKEmitter) {
       this.passives.map((p) => (p.options.enabled ? p.begin() : p.stop()))
       this.emit('moduleStarted', this._lastModule)
       await this._lastModule.perform()
+      await sleep(this.transitionTime)
     }
     return true
   }
