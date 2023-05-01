@@ -7,7 +7,7 @@ import antiafk, {
 } from "../src/index";
 
 import { promisify } from "util";
-import { KillAuraPassive } from "../src/passives/killaura";
+import { KillAura } from "../src/passives/killaura";
 import { pathfinder } from "mineflayer-pathfinder";
 const sleep = promisify(setTimeout);
 
@@ -94,26 +94,26 @@ bot.once("spawn", async () => {
   // demonstration of setting multiple module settings at a time.
   // note: these are the default settings.
   bot.antiafk.setModuleOptions({
-    WalkAroundModule: {
+    WalkAround: {
       enabled: true,
       newChunks: true,
       rotateChunks: true,
       searchRadius: 8,
     },
-    ChatBotModule: {
+    ChatBot: {
       enabled: false,
       random: false,
       messages: ["NextGEN Anti-afk Module", "test", "test1", "test2"],
       delay: 2000,
       variation: 300,
     },
-    LookAroundModule: {
+    LookAround: {
       enabled: true,
     },
-    RandomMovementModule: {
+    RandomMovement: {
       enabled: false,
     },
-    BlockBreakModule: {
+    BlockBreak: {
       enabled: true,
       // locate all easily broken blocks via this method.
       preferBlockIds: bot.registry.blocksArray
@@ -132,7 +132,7 @@ bot.once("spawn", async () => {
     },
   });
 
-  bot.antiafk.setOptionsForPassive(KillAuraPassive, {
+  bot.antiafk.setOptionsForPassive(KillAura, {
     enabled: true,
     multi: false,
     reach: 3,

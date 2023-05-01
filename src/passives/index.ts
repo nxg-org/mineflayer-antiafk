@@ -1,21 +1,21 @@
 import { Bot } from 'mineflayer'
 import { AFKModule } from '../modules'
 import { AFKConstructor } from '../utils'
-import { IKillAuraPassiveOptions, KillAuraPassive } from './killaura'
+import { IKillAuraOpts, KillAura } from './killaura'
 import { AFKPassive, AFKPassiveOptions } from './passive'
 
 export interface AntiAFKPassiveOptions { [key: string]: AFKPassiveOptions }
 
 export const DEFAULT_PASSIVES = {
-  KillAuraPassive
+  KillAura: KillAura
 } as const
 
 export interface AllPassiveSettings extends AntiAFKPassiveOptions {
-  KillAuraPassive: IKillAuraPassiveOptions,
+  KillAura: IKillAuraOpts,
 }
 
 export const PASSIVE_DEFAULT_SETTINGS: AllPassiveSettings = {
-  KillAuraPassive: {
+  KillAura: {
     enabled: true,
     multi: false,
     reach: 3,

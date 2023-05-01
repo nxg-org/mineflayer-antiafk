@@ -2,14 +2,14 @@ import { Bot } from 'mineflayer'
 import { customMerge } from '../utils'
 import { AFKPassive, AFKPassiveOptions } from './passive'
 
-export interface IKillAuraPassiveOptions extends AFKPassiveOptions {
+export interface IKillAuraOpts extends AFKPassiveOptions {
   reach: number
   multi: boolean
   entityBlacklist: number[]
   playerWhitelist: string[]
 }
 
-export class KillAuraPassiveOptions implements AFKPassiveOptions {
+export class KillAuraOpts implements AFKPassiveOptions {
   public enabled: boolean = false
 
   public constructor (
@@ -30,17 +30,17 @@ export class KillAuraPassiveOptions implements AFKPassiveOptions {
     )) {
       entityBlacklist.push(entity.id)
     }
-    return new KillAuraPassiveOptions(3, false, entityBlacklist, players)
+    return new KillAuraOpts(3, false, entityBlacklist, players)
   }
 }
 
-export class KillAuraPassive extends AFKPassive<IKillAuraPassiveOptions, 'physicsTick'> {
+export class KillAura extends AFKPassive<IKillAuraOpts, 'physicsTick'> {
   public static readonly hittableTypes = new Set(['mob', 'player'])
 
   protected eventWanted = 'physicsTick' as const
 
-  public constructor (bot: Bot, options: Partial<IKillAuraPassiveOptions> = {}) {
-    super(bot, customMerge(KillAuraPassiveOptions.vanillaDefault(bot), options))
+  public constructor (bot: Bot, options: Partial<IKillAuraOpts> = {}) {
+    super(bot, customMerge(KillAuraOpts.vanillaDefault(bot), options))
   }
 
   public listener = () => {
@@ -48,7 +48,7 @@ export class KillAuraPassive extends AFKPassive<IKillAuraPassiveOptions, 'physic
     if (this.options.multi) {
       // filter to only mobs, then filter to hittable entities that are not in blacklist.
       const targets = Object.values(this.bot.entities)
-        .filter((e) => KillAuraPassive.hittableTypes.has(e.type))
+        .filter((e) => KillAura.hittableTypes.has(e.type))
         .filter(
           (e) =>
             this.bot.util.entity.entityDistance(e) < this.options.reach &&
@@ -60,7 +60,7 @@ export class KillAuraPassive extends AFKPassive<IKillAuraPassiveOptions, 'physic
       // get nearest entity, check if hittable and not in blacklist.
       const target = this.bot.nearestEntity(
         (e) =>
-          KillAuraPassive.hittableTypes.has(e.type) &&
+          KillAura.hittableTypes.has(e.type) &&
           this.bot.util.entity.entityDistance(e) < this.options.reach &&
           !this.options.entityBlacklist.includes(e.entityType ?? -1) &&
           !(e.username && this.options.playerWhitelist.includes(e.username))

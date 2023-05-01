@@ -24,9 +24,9 @@ export const DEFAULT_MODULES = require.resolve('mineflayer-pathfinder')
       BlockBreak
     } as const)
   : ({
-      LookAroundModule: LookAround,
-      RandomMovementModule: RandomMovement,
-      ChatBotModule: ChatBot
+      LookAround: LookAround,
+      RandomMovement: RandomMovement,
+      ChatBot: ChatBot
     } as const)
 
 /**
