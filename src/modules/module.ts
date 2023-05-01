@@ -37,6 +37,7 @@ export abstract class AFKModule<T extends AFKModuleOptions = AFKModuleOptions> {
      */
   public async perform (): Promise<boolean> {
     this.isActive = true
+    this.shouldCancel = false;
     return true
   }
 
@@ -71,7 +72,7 @@ export abstract class AFKModule<T extends AFKModuleOptions = AFKModuleOptions> {
      * @param toEmit
      */
   public complete (success: boolean, reason?: string, ...toEmit: any[]): boolean {
-    this.isActive = false
+    this.isActive = false;
     this.bot.antiafk.emit('moduleCompleted', this, success, reason, ...toEmit)
     this.cleanup()
     return success
