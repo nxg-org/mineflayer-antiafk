@@ -42,6 +42,7 @@ export class BoxWalk extends AFKModule<IBoxWalk> {
         await sleep(50);
       }
       if (this.shouldCancel) break;
+      this.bot.clearControlStates();
       await sleep(this.options.waitTime)
     }
     if (this.shouldCancel) return this.complete(false, "Canceled!");
