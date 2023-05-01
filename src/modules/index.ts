@@ -84,6 +84,7 @@ export interface AllModuleSettings {
   BoxWalk: IBoxWalk
   ChatBot: ChatBotOpts
   BlockBreak: IBlockBreakOpts
+  SwingArm: {enabled: boolean}
   LookAround: { enabled: boolean }
   RandomMovement: { enabled: boolean }
 }
