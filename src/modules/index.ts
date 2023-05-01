@@ -81,7 +81,7 @@ export const MODULE_DEFAULT_SETTINGS: (bot: Bot) => Partial<AllModuleSettings> =
 export interface AllModuleSettings {
   PathfinderWalk: IPathfinderWalkOpts
   SimpleWalk: ISimpleWalkOpts
-  BlockWalk: IBoxWalk
+  BoxWalk: IBoxWalk
   ChatBot: ChatBotOpts
   BlockBreak: IBlockBreakOpts
   LookAround: { enabled: boolean }
